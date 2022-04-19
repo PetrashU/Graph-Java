@@ -57,7 +57,7 @@
 
 \title{\texttt{Specyfikacja funkcjonalna}\\Generacja grafu i odnalezienie najkrótszej ścieżki pomiędzy węzłami - \texttt{graph}}
 \author{Ulyana Petrashevich, Inga Maziarz}
-\date{23.02.2022}
+\date{20.04.2022}
 
 \begin{document}
 \maketitle
@@ -99,63 +99,42 @@ Przykład danych wejściowych:
 Wyżej jest zdefiniowany graf o rozmiarze 2 wierszy i 3 kolumn. Dla węzła numer 0 istnieją przejścia do węzła 1 o wadze 0.8865 i do węzła 2 o wadze 0.2188.
 
 \section{Dane wyjściowe}\label{header-n279}
-Aby wyznaczenie najkrótszej ścieżki zakończyło się pomyślnie, graf musi być spójny. Po sprawdzeniu poprawności grafu, program wypisuje najkrótszą znalezioną ścieżkę w postaci\texttt{ numer węzła początkowego – waga – numer węzła pośredniego-...-numer węzła końcowego}. Wypisywana jest sumaryczna długość znalezionej ścieżki.
+Program jest wyposażony w interfejs graficzny.
 
-W przypadku generowania grafu, program zapisuje parametry węzłów do pliku tekstowego w postaci analogicznej do danych wejściowych: liczby wierszy i kolumn, numery węzłów, do których prowadzi krawędź od węzła odpowiadającego numerowi linii – 1, nie licząc linii z liczbą kolumn i wierszy.
+Interfejs jest wyposażony w opcje:
+\begin{itemize}
+    \item Size
+    
+    Pozwala na wyświetlenie rozmiaru podanego grafu lub wprowadzenie rozmiaru dla generacji grafu.
+    \item Edge weight range
+    
+    Pozwala na wyświetlenie zakresu wartości wag krawędzi lub podanie zakresu dla generacji grafu.
+    
+    \item Connectivity
+    
+    Pozwala na wyświetlenie flagi spójności grafu lub wprowadzenie flagi dla generatora grafu (0 - niespójny, 1 - spójny, 2 - spójność losowa).
+    \item Generate
+    
+    Przycisk uruchamia generator grafu z parametrami, wprowadzonymi w poprzednich okienkach.
+    \item Read
+    
+    Przycisk pozwala na wybranie gotowego pliku z grafem i jego wczytanie.
+    \item Save graph
+    
+    Przycisk pozwala na zapisanie danego grafu do pliku.
+    \item Save path
+    
+    Przycisk pozwala na zapisanie wyliczonej ścieżki do pliku.
+    \item Delete
+    
+    Przycisk usuwa rysunek grafu.
+\end{itemize}
 
-Przykłady danych wyjściowych:
+Postać narysowanego grafu:
 
-\begin{verbatim}
-Najkrótsza ścieżka:
-0 -0.1635472537235685- 3 -0.6524342534143475- 5
-Długość ścieżki równa 0.815981507137916
-\end{verbatim}
-Program znalazł najkrótszą ścieżkę od węzła 0 do węzła 5 i wyznaczył długość tej ścieżki.
+Wagi krawędzi między węzłami będą odwzorowane kolorem (wzrastająco od niebieskiego do czerwonego). Tuż po narysowaniu grafu węzły będą miały kolor szary. Po naciśnięciu na wybrany węzeł lewym przyciskiem myszy, kolor węzłów będzie odwzorowywał koszt dojścia od wybranego węzła. Po naciśnięciu na inny węzeł prawym klawiszem myszy zostanie narysowana ścieżka w kolorze białym.
 
-\begin{verbatim}
-3 1
-    1 :2.4562823562334748  2: 7.2677219245832457 
-    2: 5.3847356384723346
-    0: 0.4537284536532248
-\end{verbatim}
-Program utworzył graf o 3 wierszach i 1 kolumnie węzłów. Wagi wygenerowane w zakresie [0.01, 10.0]
 \section{Argumenty wywołania programu}\label{header-n256}
-
-Program \texttt{graph} akceptuje następujące argumenty wywołania:
-
-\begin{itemize}
-\item
-  \texttt{-file\ filename} nazwa pliku z danymi;
-\item
-  \texttt{-from\ k} podawany jest numer węzła początkowego w ścieżce; domyślnie \texttt{k\ =\ 0};
-\item
-  \texttt{-to\ l} podawany jest numer węzła końcowego w ścieżce; domyślnie \texttt{l\ =\ maksymalny numer w grafie};
-\item
-  \texttt{-output\ filename} nazwa pliku, w który będzie zapisywana ścieżka; domyślnie \texttt{stdout};
-\item
-  \texttt{-grow\ n} określa liczbę wierszy generowanego grafu; domyślnie \texttt{n\ =\ 10};
-\item
-  \texttt{-gcol\ m} określa liczbę kolumn w generowanym grafie; domyślnie \texttt{m\ =\ 10};
-\item
-  \texttt{-gfrom\ x} przyjmuje granicę dolną zakresu wartości losowanych wag, domyślnie \texttt{x\ =\ 0.01};
-\item
-  \texttt{-gto\ y} przyjmuje granicę górną zakresu wartości losowanych wag, domyślnie \texttt{y\ =\ 10.0};
-\item
-  \texttt{-gconnect\ s} przyjmuje flagę na spójność generowanego grafa. 0 - graf niespójny, 1 - graf spójny, 2 - graf losowy;
-\item
-  \texttt{-goutput\ filename} nazwa pliku, w którym będą zapisane parametry wygenerowanego grafu, domyślnie \texttt{stdout}.
-\end{itemize}
-
-Przykładowe wywołania programu:
-
-\begin{itemize}
-\item
-  \texttt{./graph\ -grow\ 3\ -gcol\ 2\ -gfrom\ 4.5\ -gto\ 10\ -goutput\ graph.txt}
-  , program utworzy graf o 3 wierszach, 2 kolumnach i wagach w przedziale \texttt{[} 4.5; 10.0\texttt{]};
-\item
-  \texttt{./graph\ -file\ graph.txt\ -from\ 2\ -to\ 15\ -output\ sciezka}
-  , program wczyta dane z pliku \texttt{graph.txt}, znajdzie najkrótszą ścieżkę pomiędzy węzłami 2 i 15 i zapisze wynik do pliku \texttt{sciezka}. 
-\end{itemize}
 
 \section{Teoria}\label{header-n279}
 
@@ -190,9 +169,6 @@ W przypadku, gdy znaczące dane nie są podane, program \texttt{graph} stara si�
 \item
   Podany plik nie można otworzyć:
   \texttt{Nie\ udało\ się\ otworzyć\ plik\ \emph{filename}.\ Przerywam\ działanie.}
-\item
-  Nie podano pliku z danymi:
-  \texttt{Nie\ został\ podany\ plik\ z\ danymi.\ Tworzę\ graf\ o\ rozmiarach\ \emph{n},\ \emph{m},\ z\ wartościami\ wag\ w\ zakresie\ [\emph{x},\ \emph{y}].}
 \item
   Nie podano liczby wierszy/kolumn:
   \texttt{Nie\ podano\ liczby\ wierszy\texttt{/}kolumn.\ Przerywam\ działanie. }
