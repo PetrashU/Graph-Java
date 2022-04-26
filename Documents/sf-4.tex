@@ -125,16 +125,23 @@ Interfejs jest wyposażony w opcje:
     \item Save path
     
     Przycisk pozwala na zapisanie wyliczonej ścieżki do pliku.
+    \item Clear
+    
+    
+    Przycisk pozwala na wyczyszczenie narysowanych ścieżek w grafie.
     \item Delete
     
     Przycisk usuwa rysunek grafu.
+    \item Modify color range
+    
+    
+    Przycisk pozwala na dostosowanie spektrum kolorów używanych do oznaczania wag krawędzi.
 \end{itemize}
 
 Postać narysowanego grafu:
 
-Wagi krawędzi między węzłami będą odwzorowane kolorem (wzrastająco od niebieskiego do czerwonego). Tuż po narysowaniu grafu węzły będą miały kolor szary. Po naciśnięciu na wybrany węzeł lewym przyciskiem myszy, kolor węzłów będzie odwzorowywał koszt dojścia od wybranego węzła. Po naciśnięciu na inny węzeł prawym klawiszem myszy zostanie narysowana ścieżka w kolorze białym.
+Wagi krawędzi między węzłami będą odwzorowane kolorem (wzrastająco od niebieskiego do czerwonego). Tuż po narysowaniu grafu węzły będą miały kolor szary. Po naciśnięciu na wybrany węzeł lewym przyciskiem myszy, kolor węzłów będzie odwzorowywał koszt dojścia od wybranego węzła. Po naciśnięciu na inny węzeł prawym klawiszem myszy zostanie narysowana ścieżka w kolorze białym. Możliwe jest wyznaczenie wielu najkrótszych ścieżek na tym samym rysunku poprzez wybór kolejnych węzłów początkowych i końcowych.
 
-\section{Argumenty wywołania programu}\label{header-n256}
 
 \section{Teoria}\label{header-n279}
 
@@ -167,26 +174,14 @@ W przypadku, gdy znaczące dane nie są podane, program \texttt{graph} stara si�
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \item
-  Podany plik nie można otworzyć:
-  \texttt{Nie\ udało\ się\ otworzyć\ plik\ \emph{filename}.\ Przerywam\ działanie.}
+  Nie można otworzyć podanego pliku (np. przy wczytywaniu grafu):
+  \texttt{Nie\ udało\ się\ otworzyć\ pliku\ \emph{filename}.}
 \item
   Nie podano liczby wierszy/kolumn:
-  \texttt{Nie\ podano\ liczby\ wierszy\texttt{/}kolumn.\ Przerywam\ działanie. }
-\item
-  Podany numer początkowego węzła mniejszy 0:
-  \texttt{Numer\ węzła\ początkowego\ musi\ być\ większy\ lub\ równy\ 0.\ Ustawiam\ wartość\ 0.}
-\item
-  Podany numer początkowego węzła leży za przedziałem grafu:
-  \texttt{Numer\ węzła\ początkowego\ znajduje\ się\ za\ przedziałem\ grafu.\ Ustawiam\ wartość\ \emph{n * m - 1}.}
-\item
-  Podany numer końcowego węzła mniejszy 0:
-  \texttt{Numer\ węzła\ końcowego\ musi\ być\ większy\ lub\ równy\ 0.\ Ustawiam\ wartość\ 0.}
-\item
-  Podany numer końcowego węzła leży za przedziałem grafu:
-  \texttt{Numer\ węzła\ końcowego\ znajduje\ się\ za\ przedziałem\ grafu.\ Ustawiam\ wartość\ \emph{n * m - 1}.}
+  \texttt{Nie\ podano\ liczby\ wierszy\texttt{/}kolumn.\ Wygenerowanie\ grafu nie jest możliwe. }
 \item
   Podany graf nie jest spójny:
-  \texttt{Podany\ graf\ nie\ jest\ spójny.\ Przerywam\ działanie.}
+  \texttt{Podany\ graf\ nie\ jest\ spójny.\ Nie można wyznaczyć najkrótszych ścieżek.}
 \item
   Podana liczba wierszy węzłów generowanego grafu mniejsza/równa 0:
   \texttt{Liczba\ wierszy\ musi\ być\ większa\ 0.\ Ustawiam\ wartość\ 10.}
@@ -199,6 +194,9 @@ W przypadku, gdy znaczące dane nie są podane, program \texttt{graph} stara si�
 \item
   Górna granica zakresu losowanych wag mniejsza/równa 0:
   \texttt{Górna\ granica\ przedziału\ losowanych\ wartości\ wag\ musi\ być\ większa\ 0.\ Ustawiam\ wartość\ \emph{x + 1}.}
+\item 
+    Flaga spójności nie równa się 0, 1 lub 2:
+    \texttt{Nieprawidłowa flaga spójności. Ustawiam wartość 2 (losowa spójność)}
 \end{enumerate}
 
 \end{document}
