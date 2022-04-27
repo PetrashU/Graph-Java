@@ -55,7 +55,7 @@
 \makeatother
 
 
-\title{\texttt{Specyfikacja funkcjonalna}\\Generacja grafu i odnalezienie najkrótszej ścieżki pomiędzy węzłami - \texttt{graph}}
+\title{\texttt{Specyfikacja funkcjonalna}\\Generacja grafu i odnalezienie najkrótszej ścieżki pomiędzy węzłami - \texttt{graph} - Java}
 \author{Ulyana Petrashevich, Inga Maziarz}
 \date{20.04.2022}
 
@@ -72,7 +72,7 @@
 
 \section{Cel projektu}\label{header-n231}
 
-Program \texttt{graph} ma na celu znalezienie najkrótszej ścieżki między dwoma wybranymi punktami. Program może wczytywać graf z pliku o określonym formacie lub wygenerować graf o zadanej liczbie kolumn i wierszy z losowymi wartościami wag krawędzi w określonym przedziale. Sprawdzana jest spójność grafu. Program działa w trybie wsadowym.
+Program \texttt{graph} ma na celu znalezienie najkrótszej ścieżki między dwoma wybranymi punktami. Program może wczytywać graf z pliku o określonym formacie lub wygenerować graf o zadanej liczbie kolumn i wierszy z losowymi wartościami wag krawędzi w określonym przedziale. Sprawdzana jest spójność grafu.
 
 \section{Dane wejściowe}\label{header-n233}
 
@@ -87,9 +87,9 @@ Program przyjmuje dane o grafie z pliku tekstowego, w którym są opisane parame
   waga krawędzi: liczba rzeczywista \textgreater{} 0.
 \end{itemize}
 
-W pierwszej linii pliku podana jest ilość wierszy i kolumn grafu. Parametry do jednego węzła są definiowane poniżej w jednej linii. Numer węzła docelowego jest oddzielany od wagi spacją i znakiem \texttt{:}. Parametry dla jednego węzła są oddzielane dwiema spacjami.
+W pierwszej linii pliku podana jest liczba wierszy i kolumn grafu. Parametry do jednego węzła są definiowane poniżej w jednej linii. Numer węzła docelowego jest oddzielany od wagi spacją i znakiem \texttt{:}. Parametry dla jednego węzła są oddzielane dwiema spacjami.
 
-W przypadku generowania grafu przez program, parametry są przekazywane za pomocą argumentów wywołania programu. Jeżeli parametry nie zostaną określone, wygenerowany zostanie graf bazujący na domyślnych wartościach (10 wierszy, 10 kolumn, przedział wagowy krawędzi [0.01, 10.0]).
+W przypadku generowania grafu przez program, parametry są przekazywane za pomocą opcji w interfejsie graficznym. Jeżeli parametry nie zostaną określone, wygenerowany zostanie graf bazujący na domyślnych wartościach (10 wierszy, 10 kolumn, przedział wagowy krawędzi [0.01, 10.0]).
 
 
 
@@ -177,7 +177,7 @@ Poszukiwanie najkrótszej ścieżki między zadanymi punktami program będzie re
 
 \section{Komunikaty błędów}\label{header-n281}
 
-W przypadku, gdy znaczące dane nie są podane, program \texttt{graph} stara się nadawać im przypisane domyślne znaczenia. Lecz w przypadkach, gdy dane nie można zastąpić lub są podane błędnie, będą wyświetlane odpowiednie komunikaty.
+W przypadku, gdy znaczące dane nie są podane, program \texttt{graph} stara się nadawać im przypisane domyślne znaczenia. Lecz w przypadkach, gdy dane nie można zastąpić lub są podane błędnie, będą wyświetlane odpowiednie komunikaty: w przypadku błędu, który może być naprawiony przez program będzie wyświetlane ostrzeżenie (Warning), w przypadku błędu skutkującego koniec obecnego działania - komunikat Error.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
