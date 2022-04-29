@@ -1,5 +1,6 @@
 \documentclass[]{article}
 \usepackage{lmodern}
+\usepackage{graphicx}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
@@ -14,6 +15,7 @@
   \fi
   \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
 \fi
+\renewcommand{\figurename}{Rys.}
 % use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 % use microtype if available
@@ -48,7 +50,7 @@
 \let\oldsubparagraph\subparagraph
 \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
-
+\renewcommand{\contentsname}{Spis treści}
 % set default figure placement to htbp
 \makeatletter
 \def\fps@figure{htbp}
@@ -62,21 +64,24 @@
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 \pagestyle{fancy}
+\fancypagestyle{plain}{}
 \fancyhf{}
 \rhead{Specyfikacja funkcjonalna}
 \lhead{Graph - Java}
-\rfoot{Page \thepage \hspace{1pt} of \pageref{LastPage}}
+\cfoot{Strona \thepage \hspace{1pt} z \pageref{LastPage}}
 
 \begin{document}
 \maketitle
-
+\tableofcontents
+\thispagestyle{empty}
+\newpage
 \section{Cel projektu}\label{header-n231}
 
-Program \texttt{graph} ma na celu znalezienie najkrótszej ścieżki między dwoma wybranymi punktami. Program może wczytywać graf z pliku o określonym formacie lub wygenerować graf o zadanej liczbie kolumn i wierszy z losowymi wartościami wag krawędzi w określonym przedziale. Sprawdzana jest spójność grafu.
+Program \texttt{graph} ma na celu znalezienie najkrótszej ścieżki między dwoma wybranymi punktami. Program może wczytywać graf z pliku o określonym formacie lub wygenerować graf o zadanej liczbie kolumn i wierszy z losowymi wartościami wag krawędzi w określonym przedziale. Sprawdzana jest spójność grafu. Program oferuje graficzny interfejs użytkownika.
 
 \section{Dane wejściowe}\label{header-n233}
 
-Program przyjmuje dane o grafie z pliku tekstowego, w którym są opisane parametry węzłów:
+Program przyjmuje dane o grafie (opcja wczytywania grafu) z pliku tekstowego, w którym są opisane parametry węzłów:
 
 \begin{itemize}
 \item
@@ -88,10 +93,6 @@ Program przyjmuje dane o grafie z pliku tekstowego, w którym są opisane parame
 \end{itemize}
 
 W pierwszej linii pliku podana jest liczba wierszy i kolumn grafu. Parametry do jednego węzła są definiowane poniżej w jednej linii. Numer węzła docelowego jest oddzielany od wagi spacją i znakiem \texttt{:}. Parametry dla jednego węzła są oddzielane dwiema spacjami.
-
-W przypadku generowania grafu przez program, parametry są przekazywane za pomocą opcji w interfejsie graficznym. Jeżeli parametry nie zostaną określone, wygenerowany zostanie graf bazujący na domyślnych wartościach (10 wierszy, 10 kolumn, przedział wagowy krawędzi [0.01, 10.0]).
-
-
 
 Przykład danych wejściowych:
 
@@ -105,6 +106,25 @@ Przykład danych wejściowych:
 	 4 :0.44272335750313074
 \end{verbatim}
 Wyżej jest zdefiniowany graf o rozmiarze 2 wierszy i 3 kolumn. Dla węzła numer 0 istnieją przejścia do węzła 1 o wadze 0.8865 i do węzła 2 o wadze 0.2188.
+
+W przypadku generowania grafu przez program, parametry są przekazywane za pomocą opcji w interfejsie graficznym. Jeżeli parametry nie zostaną określone, wygenerowany zostanie graf bazujący na domyślnych wartościach (10 wierszy, 10 kolumn, przedział wagowy krawędzi [0.01, 10.0]).
+\newpage
+\section{Makieta interfejsu graficznego}\label{header-n233}
+\begin{figure}[h!]
+\begin{center}
+  \includegraphics[scale=0.6]{graf.png}
+  \end{center}
+  \caption{Projekt głównego okna interfejsu}
+  \label{fig:graf}
+\end{figure}
+\begin{figure}[h!]
+\begin{center}
+  \includegraphics[scale=0.45]{bledy.png}
+  \end{center}
+  \caption{Przykładowe komunikaty błędów i ostrzeżenia}
+  \label{fig:bledy}
+\end{figure}
+
 
 \section{Dane wyjściowe}\label{header-n279}
 Program jest wyposażony w interfejs graficzny.
@@ -120,19 +140,30 @@ Interfejs jest wyposażony w opcje:
     
     \item Connectivity
     
-    Pozwala na wyświetlenie flagi spójności grafu lub wprowadzenie flagi dla generatora grafu (0 - niespójny, 1 - spójny, 2 - spójność losowa).
+    Pozwala na wyświetlenie flagi spójności grafu lub wprowadzenie flagi dla generatora grafu (connected, not connected, random - losowanie spójności grafu).
     \item Generate
     
-    Przycisk uruchamia generator grafu z parametrami, wprowadzonymi w poprzednich okienkach.
+    Przycisk uruchamia generator grafu z parametrami wprowadzonymi w poprzednich okienkach.
     \item Read
     
-    Przycisk pozwala na wybranie gotowego pliku z grafem i jego wczytanie.
+    Przycisk pozwala na wybranie gotowego pliku z grafem i jego wczytanie. Plik musi być w formacie tekstowym i spełniać wymagania podane w sekcji \texttt{Dane wejściowe}.
     \item Save graph
     
-    Przycisk pozwala na zapisanie danego grafu do pliku.
+    Przycisk pozwala na zapisanie danego grafu do pliku. Domyślnie graf zapisywany jest do podkatalogu \texttt{graphs} z nazwą \texttt{graph[liczba\_ wierszy]x[liczba\_kolumn].txt}
     \item Save path
     
-    Przycisk pozwala na zapisanie wyliczonej ścieżki do pliku.
+    Przycisk pozwala na zapisanie wyliczonej ścieżki do pliku. Ścieżka ma następujący format;
+    \begin{verbatim}
+    [numer_węzła] -[waga_przejścia]- ...
+    Długość ścieżki jest równa [liczba]
+    \end{verbatim}
+    a poniżej znajduje się jej przykład.
+    \begin{verbatim}
+    Najkrótsza ścieżka:
+0 -0.1635472537235685- 3 -0.6524342534143475- 5
+Długość ścieżki jest równa 0.815981507137916
+        \end{verbatim}
+
     \item Clear
     
     
@@ -169,6 +200,7 @@ Poszukiwanie najkrótszej ścieżki między zadanymi punktami program będzie re
   Dla każdego węzła ustawiamy długość ścieżki na nieskończoność lub wartość, która do niej dąży; długości przy węźle początkowym nadajemy wartość 0. 
 \item
   Oznaczamy węzeł jako odwiedzony. Dla każdego węzła połączonego z początkowym, przypisujemy długość równą wadze krawędzi ich łączących.
+  \newpage
 \item
   Z nieodwiedzonych węzłów znajdujemy węzeł o najmniejszej przepisanej długości. Oznaczamy go jako odwiedzony. Dla każdego węzła sąsiadującego z obecnym liczymy wartość „długość przy obecnym węźle + waga krawędzi łączącej”. Jeżeli znaleziona wartość jest mniejsza niż przypisana do sąsiadującego węzła, podmieniamy ją.
 \item
@@ -177,7 +209,7 @@ Poszukiwanie najkrótszej ścieżki między zadanymi punktami program będzie re
 
 \section{Komunikaty błędów}\label{header-n281}
 
-W przypadku, gdy znaczące dane nie są podane, program \texttt{graph} stara się nadawać im przypisane domyślne znaczenia. Lecz w przypadkach, gdy dane nie można zastąpić lub są podane błędnie, będą wyświetlane odpowiednie komunikaty: w przypadku błędu, który może być naprawiony przez program będzie wyświetlane ostrzeżenie (Warning), w przypadku błędu skutkującego koniec obecnego działania - komunikat Error.
+W przypadku, gdy znaczące dane nie są podane, program \texttt{graph} stara się nadawać im przypisane domyślne znaczenia. Lecz w przypadkach, gdy danych nie można zastąpić lub są podane błędnie, będą wyświetlane odpowiednie komunikaty: w przypadku błędu, który może być naprawiony przez program będzie wyświetlane ostrzeżenie (Warning), a w przypadku błędu przerywającego obecne działanie - komunikat Error (rys. \ref{fig:bledy}).
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -202,9 +234,6 @@ W przypadku, gdy znaczące dane nie są podane, program \texttt{graph} stara si�
 \item
   Górna granica zakresu losowanych wag mniejsza/równa 0:
   \texttt{Górna\ granica\ przedziału\ losowanych\ wartości\ wag\ musi\ być\ większa\ 0.\ Ustawiam\ wartość\ \emph{x + 1}.}
-\item 
-    Flaga spójności nie równa się 0, 1 lub 2:
-    \texttt{Nieprawidłowa flaga spójności. Ustawiam wartość 2 (losowa spójność)}
 \end{enumerate}
 
 \end{document}
