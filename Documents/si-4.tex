@@ -1,0 +1,147 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+\renewcommand{\figurename}{Rys.}
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\PassOptionsToPackage{hyphens}{url} % url is loaded by hyperref
+\usepackage[unicode=true]{hyperref}
+\hypersetup{
+            pdftitle={Generacja grafu i odnalezienie najkrótszej ścieżki pomiędzy węzłami: graph},
+            pdfauthor={Ulyana Petrashevich, Inga Maziarz}
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\renewcommand{\contentsname}{Spis treści}
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+
+\title{\texttt{Specyfikacja implementacyjna}\\Generacja grafu i odnalezienie najkrótszej ścieżki pomiędzy węzłami - \texttt{graph} - Java}
+\author{Ulyana Petrashevich, Inga Maziarz}
+\date{17.05.2022}
+
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\pagestyle{fancy}
+\fancypagestyle{plain}{}
+\fancyhf{}
+\rhead{Specyfikacja implementacyjna}
+\lhead{Graph - Java}
+\cfoot{Strona \thepage \hspace{1pt} z \pageref{LastPage}}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+\section{Informacje ogólne}\label{header-n231}
+Program \texttt{graph} został napisany w języku Java w środowisku programistycznym ????. Współpraca i wersjonowanie odbywa się w repozytorium zdalnym w serwisie GitHub.
+
+Wielkość okienka: 800 x 600.
+
+\section{Opis modułów/pakietów}\label{header-n233}
+Podrozdział: Moduł/pakiet - opis: W każdym z podrozdziałów opisujemy oddzielny moduł programu tzn. główne zadanie i powiązania między innymi modułami.
+
+\section{Opis klas}\label{header-n233}
+Podrozdział: Klasa - opis: W tym rozdziale opisujemy w jakim pakiecie znajduje się klasa, po czym dziedziczy, jakie klasy implementuje, jakie spełnia zadanie biznesowe, krótko opisujemy konstruktor.
+
+Podpodrozdział: Metoda: Opisujemy oraz metody, a także pola wraz z nazwami i zwięzłą definicją. Prototyp: nagłówek metody. Zadanie: cóż czyni. Algorytm: jak to czyni - krok po kroku. Wartość zwracana: co zwraca.
+
+\section{Słuchaczy akcji dla każdego z pól, przycisków, paneli}\label{header-n279}
+ Jak widać w opisie logiki programu przechodzimy od ogółu do szczegółu i jeśli programujemy np. w Javie, i jeśli implementujemy GUI, to opisujemy też (wtedy będzie to rozdział 4) słuchaczy akcji dla każdego z pól, przycisków, paneli itp. Jest to w tym przypadku i w tej specyfikacji bardzo ważne, ponieważ dobry opis pola i jego słuchacza akcji odciąży w momencie programowania nas z zastanawiania się "jak to powinno być zrobione?", by móc spokojnie zająć się tym, by to po prostu było zrobione (jednakże należy pamiętać, że licho nigdy nie śpi i powinniśmy przeznaczyć niewielką część uwagi na poprawność rozwiązania).
+
+\begin{itemize}
+    \item Pole "Size"
+    
+    Pole będzie pobierało od użytkownika rozmiar grafu za pomocą getText().
+    \item Pole "Edge weight range"
+    
+    Pole będzie pobierało od użytkownika zakres wartości wag krawędzi za pomocą getText().
+    \item Przycisk opcji "Connectivity"
+    
+    Element Radio Box będzie pobierało wybraną opcję spójności grafu(jedną na raz) za pomocą ButtonGroup.getSelection().getActionCommand().
+    \item Przycisk "Generate"
+    
+    Przycisk będzie uruchamiał wczytywanie wartości z pól "Size", "Edge weight range" i przycisku opcji "Connectivity", i uruchamiał generator grafu. Słuchaczem akcji występuje okno "Kratka".
+    \item Przycisk "Read"
+    
+    Przycisk uruchomi wyświetlanie okienka do wyboru pliku do wczytania grafu, uruchomi jego wczytanie do programu i narysowanie w interfejsie graficznym.
+    \item Przycisk "Save graph"
+    
+    Przycisk wyświetli okienko do wyboru/utworzenia pliku do zapisania obecnego grafu i uruchomi jego zapisywanie.
+    \item Przycisk "Save path"
+    
+    Przycisk wyświetli okienko do wyboru/utworzenia pliku do zapisania wybranych ścieżek i uruchomi zapisywanie.
+    \item Przycisk "Clear"
+    
+    Przycisk usunie wszystkie wyznaczone ścieżki w grafie.
+    \item Przycisk "Delete"
+    
+    Przycisk usunie rysunek grafu z interfejsu.
+    \item Modify color range
+    
+    Przycisk ?????
+    \item Klikanie lewym klawiszem myszki na wierzchołek
+    
+    Klikanie uruchomi algorytm BFS do sprawdzenia spójności grafu, dalej uruchomi algorytm Dijkstry, przyjmując odznaczony wierzchołek jako początkowy i nada wierzchołkom na rysunku odpowiednie kolory. 
+    
+    \item Klikanie prawym klawiszem myszki na wierzchołek
+    
+    Klikanie uruchomi narysowanie ścieżki od poprzednio wybranego wierzchołka początkowego do zaznaczonego.
+\end{itemize}
+
+\section{Budowa GUI}\label{header-n279}
+
+\begin{figure}[h!]
+\begin{center}
+  \includegraphics[scale=0.6]{graf.png}
+  \end{center}
+  \caption{Projekt głównego okna interfejsu}
+  \label{fig:graf}
+\end{figure}
+
+\section{Testowanie}\label{header-n281}
+
+\section{Diagram klas}\label{header-n283}
+\end{document}
