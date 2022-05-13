@@ -76,7 +76,7 @@
 \thispagestyle{empty}
 \newpage
 \section{Informacje ogólne}\label{header-n231}
-Program \texttt{graph} został napisany w języku Java w środowisku programistycznym ????. Współpraca i wersjonowanie odbywa się w repozytorium zdalnym w serwisie GitHub.
+Program \texttt{graph} został napisany w języku Java w środowisku programistycznym IntelliJ IDEA. Współpraca i wersjonowanie odbywa się w repozytorium zdalnym w serwisie GitHub.
 
 Rozdział 1: Informacje ogólne: Ja w tym rozdziale umieściłem ogólne parametry uruchomieniowe programu, np. wielkość okienka, styl domyślny, położenie okna po uruchomieniu.
 
@@ -85,10 +85,106 @@ Wielkość okienka: 800 x 600.
 \section{Opis modułów/pakietów}\label{header-n233}
 Podrozdział: Moduł/pakiet - opis: W każdym z podrozdziałów opisujemy oddzielny moduł programu tzn. główne zadanie i powiązania między innymi modułami.
 
+\begin{itemize}
+    \item Moduł javafx.controls
+    
+    Moduł zawiera sterowniki i kompozycję dla graficznego interfejsu JavaFX. 
+    \item Pakiet java.awt
+   
+    Zawiera klasy dla zbudowania interfejsu użytkownika i stworzenia grafik.
+    \item Pakiet java.util
+   
+    Zawiera podstawowe klasy (m.in Arrays, ArrayList, Date).
+    \item Pakiet java.io
+   
+    Dostarcza obsługę operacji wejścia/wyjścia.
+\end{itemize}
+
 \section{Opis klas}\label{header-n233}
 Podrozdział: Klasa - opis: W tym rozdziale opisujemy w jakim pakiecie znajduje się klasa, po czym dziedziczy, jakie klasy implementuje, jakie spełnia zadanie biznesowe, krótko opisujemy konstruktor.
 
 Podpodrozdział: Metoda: Opisujemy oraz metody, a także pola wraz z nazwami i zwięzłą definicją. Prototyp: nagłówek metody. Zadanie: cóż czyni. Algorytm: jak to czyni - krok po kroku. Wartość zwracana: co zwraca.
+
+Pakiet "Kratka":
+\begin{itemize}
+    \item Kratka dziedziczy po Aplication
+    
+    Klasa odpowiada za wygląd i funkcjonowanie interfejsu graficznego. Zawiera funkcję main, uruchamiającą program. 
+    
+    Metody:
+    \begin{itemize}
+        \item start
+        
+        Metoda zastępuję metodę start, zdefiniowaną w klasie Aplication. W metodzie są zdefiniowane właściwości okna "Kratka", dodane etykiety, pola tekstowe, pole wyboru, przyciski z ustalonymi działaniami. 
+        \item main
+        
+        Metoda odpowiada za uruchomienie aplikacji.
+        
+    \end{itemize}
+    \item ColorScale
+    
+    Klasa odpowiada za zdefiniowanie i narysowanie skali kolorów.
+    
+    Metody:
+    \begin{itemize}
+    \item void changeMin(double min)
+    
+    Ustawia min jako wartość minimalną na skali. 
+    \item void changeMax(double max)
+    
+    Ustawia max jako wartość maksymalną na skali.
+    \item color ColorOfValue(double value)
+    
+    Zwraca kolor, odpowiadający wartości value zgodnie ze skalą.
+    \item image DrawColorScale(int width, int height)
+    
+    Tworzy i zwraca rysunek skali kolorów o szerokości width i wysokości height. 
+    
+    ???? Może dodać coś o ustaleniu kolorów przez użytkownika???????
+    \end{itemize}
+\end{itemize}
+
+Pakiet "Graph":
+\begin{itemize}
+    \item Graph
+    
+    Klasa definiuje postać przechowywania grafu i zawiera działania na grafie.
+    Metody:
+    \begin{itemize}
+        \item void read\_graph(reader???? r)
+        
+        Metoda wykorzystuję plik, otwarty w czytniku r, nadaje grafu wczytane wartości liczb wierszy i kolumn i dodaje krawędzi.
+        \item void save\_graph(PrintWriter w)
+        
+        Metoda zapisuje graf do pliku, otwartego w zapisywaczu w.
+        \item boolean bfs()
+        
+        Metoda służy do zastosowania algorytmu przeszukiwania grafu wszerz, aby sprawdzić, czy graf jest spójny. Zwróci wartość false, jeżeli graf będzie niespójny, wartość true - spójny.
+        
+        Algorytm BFS krok po kroku:
+        \begin{itemize}
+            \item Zaczynamy od węzła początkowego. Zaznaczamy go jako odwiedzony i dodajemy do kolejki wszystkie węzły, z którymi jest powiązany, w kolejności od węzła z najmniejszym indeksem.
+            \item Odwiedzamy następny węzeł w kolejce. Dodajemy do kolejki wszystkie węzły z nim powiązane i jeszcze nieodwiedzone.
+            \item Powtarzamy poprzedni krok, aż kolejka będzie pusta. Jeżeli wszystkie węzły w grafie zostały odwiedzone, to można stwierdzić, że graf jest spójny.
+        \end{itemize}
+        \item Path dijkstra(int st)
+        Metoda służy do odnajdywania kosztów dojścia od podanego wierzchołka st do wszystkich innych w grafie za pomocą algorytmu Dijkstry.
+        
+        Algorytm Dijkstry krok po kroku:
+        \begin{itemize}
+            \item Dla każdego węzła ustawiamy długość ścieżki na nieskończoność lub wartość, która do niej dąży; długości przy węźle początkowym nadajemy wartość 0. 
+            \item Oznaczamy węzeł jako odwiedzony. Dla każdego węzła połączonego z początkowym, przypisujemy długość równą wadze krawędzi ich łączących.
+            \item Z nieodwiedzonych węzłów znajdujemy węzeł o najmniejszej przepisanej długości. Oznaczamy go jako odwiedzony. Dla każdego węzła sąsiadującego z obecnym liczymy wartość „długość przy obecnym węźle + waga krawędzi łączącej”. Jeżeli znaleziona wartość jest mniejsza niż przypisana do sąsiadującego węzła, podmieniamy ją.
+            \item Powtarzamy poprzedni krok, aż zostaną odwiedzone wszystkie węzły. Po zakończeniu każdy węzeł będzie miał przypisaną długość najkrótszej ścieżki od węzła początkowego. Samą ścieżkę możemy odtworzyć od końca, jeżeli przy każdym przypisaniu węzłowi nowej długości będziemy zapamiętywali numer poprzedniego węzła.
+        \end{itemize}
+        \item void save\_paths(PrintWriter w)
+        
+        Metoda zapisuje narysowane ścieżki do pliku, otwartego w zapisywaczu w.
+    \end{itemize}
+    \item Path
+    
+    Klasa przechowuje listę wyliczonych kosztów dojścia do wierzchołków i listę poprzedników.
+\end{itemize}
 
 \section{Słuchaczy akcji dla każdego z pól, przycisków, paneli}\label{header-n279}
  Jak widać w opisie logiki programu przechodzimy od ogółu do szczegółu i jeśli programujemy np. w Javie, i jeśli implementujemy GUI, to opisujemy też (wtedy będzie to rozdział 4) słuchaczy akcji dla każdego z pól, przycisków, paneli itp. Jest to w tym przypadku i w tej specyfikacji bardzo ważne, ponieważ dobry opis pola i jego słuchacza akcji odciąży w momencie programowania nas z zastanawiania się "jak to powinno być zrobione?", by móc spokojnie zająć się tym, by to po prostu było zrobione (jednakże należy pamiętać, że licho nigdy nie śpi i powinniśmy przeznaczyć niewielką część uwagi na poprawność rozwiązania).
