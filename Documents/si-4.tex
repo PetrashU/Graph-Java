@@ -151,6 +151,15 @@ Pakiet "Graph":
     Klasa definiuje postać przechowywania grafu i zawiera działania na grafie.
     Metody:
     \begin{itemize}
+        \item double getMaxWeight()
+        
+        Metoda zwraca największą wagę krawędzi w grafie.
+        \item double getMinWeight()
+        
+        Metoda zwraca najmniejszą wagę krawędzi w grafie.
+        \item void generate\_graph(boolean connect)
+        
+        Metoda generuje krawędzi do grafu. Spójność jest określona przez flagę connect.
         \item void read\_graph(reader???? r)
         
         Metoda wykorzystuję plik, otwarty w czytniku r, nadaje grafu wczytane wartości liczb wierszy i kolumn i dodaje krawędzi.
@@ -177,13 +186,21 @@ Pakiet "Graph":
             \item Z nieodwiedzonych węzłów znajdujemy węzeł o najmniejszej przepisanej długości. Oznaczamy go jako odwiedzony. Dla każdego węzła sąsiadującego z obecnym liczymy wartość „długość przy obecnym węźle + waga krawędzi łączącej”. Jeżeli znaleziona wartość jest mniejsza niż przypisana do sąsiadującego węzła, podmieniamy ją.
             \item Powtarzamy poprzedni krok, aż zostaną odwiedzone wszystkie węzły. Po zakończeniu każdy węzeł będzie miał przypisaną długość najkrótszej ścieżki od węzła początkowego. Samą ścieżkę możemy odtworzyć od końca, jeżeli przy każdym przypisaniu węzłowi nowej długości będziemy zapamiętywali numer poprzedniego węzła.
         \end{itemize}
-        \item void save\_paths(PrintWriter w)
-        
-        Metoda zapisuje narysowane ścieżki do pliku, otwartego w zapisywaczu w.
     \end{itemize}
     \item Path
-    
+  
     Klasa przechowuje listę wyliczonych kosztów dojścia do wierzchołków i listę poprzedników.
+        \begin{itemize}
+        \item double getMaxCost()
+        
+        Metoda zwraca największy koszt dojścia ze wszystkich.
+        \item double getMinCost()
+        
+        Metoda zwraca najmniejszy koszt dojścia ze wszystkich.
+        \item void save\_paths(PrintWriter w)
+        
+        Metoda zapisuje ścieżkę do pliku, otwartego w zapisywaczu w.
+    \end{itemize}
 \end{itemize}
 
 \section{Słuchaczy akcji dla każdego z pól, przycisków, paneli}\label{header-n279}
