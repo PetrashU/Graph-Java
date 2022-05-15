@@ -1,0 +1,262 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+\renewcommand{\figurename}{Rys.}
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\PassOptionsToPackage{hyphens}{url} % url is loaded by hyperref
+\usepackage[unicode=true]{hyperref}
+\hypersetup{
+            pdftitle={Generacja grafu i odnalezienie najkrótszej ścieżki pomiędzy węzłami: graph},
+            pdfauthor={Ulyana Petrashevich, Inga Maziarz}
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\renewcommand{\contentsname}{Spis treści}
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+
+\title{\texttt{Specyfikacja implementacyjna}\\Generacja grafu i odnalezienie najkrótszej ścieżki pomiędzy węzłami - \texttt{graph} - Java}
+\author{Ulyana Petrashevich, Inga Maziarz}
+\date{17.05.2022}
+
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\pagestyle{fancy}
+\fancypagestyle{plain}{}
+\fancyhf{}
+\rhead{Specyfikacja implementacyjna}
+\lhead{Graph - Java}
+\cfoot{Strona \thepage \hspace{1pt} z \pageref{LastPage}}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+\section{Informacje ogólne}\label{header-n231}
+Program \texttt{graph} został napisany w języku Java w środowisku programistycznym IntelliJ IDEA. Współpraca i wersjonowanie odbywa się w repozytorium zdalnym w serwisie GitHub.
+
+Rozdział 1: Informacje ogólne: Ja w tym rozdziale umieściłem ogólne parametry uruchomieniowe programu, np. wielkość okienka, styl domyślny, położenie okna po uruchomieniu.
+
+Wielkość okienka: 800 x 600.
+
+\section{Opis modułów/pakietów}\label{header-n233}
+Podrozdział: Moduł/pakiet - opis: W każdym z podrozdziałów opisujemy oddzielny moduł programu tzn. główne zadanie i powiązania między innymi modułami.
+
+\begin{itemize}
+    \item Moduł javafx.controls
+    
+    Moduł zawiera sterowniki i kompozycję dla graficznego interfejsu JavaFX. 
+    \item Pakiet java.awt
+   
+    Zawiera klasy dla zbudowania interfejsu użytkownika i stworzenia grafik.
+    \item Pakiet java.util
+   
+    Zawiera podstawowe klasy (m.in Arrays, ArrayList, Date).
+    \item Pakiet java.io
+   
+    Dostarcza obsługę operacji wejścia/wyjścia.
+\end{itemize}
+
+\section{Opis klas}\label{header-n233}
+Podrozdział: Klasa - opis: W tym rozdziale opisujemy w jakim pakiecie znajduje się klasa, po czym dziedziczy, jakie klasy implementuje, jakie spełnia zadanie biznesowe, krótko opisujemy konstruktor.
+
+Podpodrozdział: Metoda: Opisujemy oraz metody, a także pola wraz z nazwami i zwięzłą definicją. Prototyp: nagłówek metody. Zadanie: cóż czyni. Algorytm: jak to czyni - krok po kroku. Wartość zwracana: co zwraca.
+
+Pakiet "Kratka":
+\begin{itemize}
+    \item Kratka dziedziczy po Aplication
+    
+    Klasa odpowiada za wygląd i funkcjonowanie interfejsu graficznego. Zawiera funkcję main, uruchamiającą program. 
+    
+    Metody:
+    \begin{itemize}
+        \item start
+        
+        Metoda zastępuję metodę start, zdefiniowaną w klasie Aplication. W metodzie są zdefiniowane właściwości okna "Kratka", dodane etykiety, pola tekstowe, pole wyboru, przyciski z ustalonymi działaniami. 
+        \item main
+        
+        Metoda odpowiada za uruchomienie aplikacji.
+        
+    \end{itemize}
+    \item ColorScale
+    
+    Klasa odpowiada za zdefiniowanie i narysowanie skali kolorów.
+    
+    Metody:
+    \begin{itemize}
+    \item void changeMin(double min)
+    
+    Ustawia min jako wartość minimalną na skali. 
+    \item void changeMax(double max)
+    
+    Ustawia max jako wartość maksymalną na skali.
+    \item color ColorOfValue(double value)
+    
+    Zwraca kolor, odpowiadający wartości value zgodnie ze skalą.
+    \item image DrawColorScale(int width, int height)
+    
+    Tworzy i zwraca rysunek skali kolorów o szerokości width i wysokości height. 
+    
+    ???? Może dodać coś o ustaleniu kolorów przez użytkownika???????
+    \end{itemize}
+\end{itemize}
+
+Pakiet "Graph":
+\begin{itemize}
+    \item Graph
+    
+    Klasa definiuje postać przechowywania grafu i zawiera działania na grafie.
+    Metody:
+    \begin{itemize}
+        \item double getMaxWeight()
+        
+        Metoda zwraca największą wagę krawędzi w grafie.
+        \item double getMinWeight()
+        
+        Metoda zwraca najmniejszą wagę krawędzi w grafie.
+        \item void generateGraph(boolean connect)
+        
+        Metoda generuje krawędzi do grafu. Spójność jest określona przez flagę connect.
+        \item void readGraph(reader???? r)
+        
+        Metoda wykorzystuję plik, otwarty w czytniku r, nadaje grafu wczytane wartości liczb wierszy i kolumn i dodaje krawędzi.
+        \item void saveGraph(PrintWriter w)
+        
+        Metoda zapisuje graf do pliku, otwartego w zapisywaczu w.
+        \item boolean bfs()
+        
+        Metoda służy do zastosowania algorytmu przeszukiwania grafu wszerz, aby sprawdzić, czy graf jest spójny. Zwróci wartość false, jeżeli graf będzie niespójny, wartość true - spójny.
+        
+        Algorytm BFS krok po kroku:
+        \begin{itemize}
+            \item Zaczynamy od węzła początkowego. Zaznaczamy go jako odwiedzony i dodajemy do kolejki wszystkie węzły, z którymi jest powiązany, w kolejności od węzła z najmniejszym indeksem.
+            \item Odwiedzamy następny węzeł w kolejce. Dodajemy do kolejki wszystkie węzły z nim powiązane i jeszcze nieodwiedzone.
+            \item Powtarzamy poprzedni krok, aż kolejka będzie pusta. Jeżeli wszystkie węzły w grafie zostały odwiedzone, to można stwierdzić, że graf jest spójny.
+        \end{itemize}
+        \item Path dijkstra(int st)
+        Metoda służy do odnajdywania kosztów dojścia od podanego wierzchołka st do wszystkich innych w grafie za pomocą algorytmu Dijkstry.
+        
+        Algorytm Dijkstry krok po kroku:
+        \begin{itemize}
+            \item Dla każdego węzła ustawiamy długość ścieżki na nieskończoność lub wartość, która do niej dąży; długości przy węźle początkowym nadajemy wartość 0. 
+            \item Oznaczamy węzeł jako odwiedzony. Dla każdego węzła połączonego z początkowym, przypisujemy długość równą wadze krawędzi ich łączących.
+            \item Z nieodwiedzonych węzłów znajdujemy węzeł o najmniejszej przepisanej długości. Oznaczamy go jako odwiedzony. Dla każdego węzła sąsiadującego z obecnym liczymy wartość „długość przy obecnym węźle + waga krawędzi łączącej”. Jeżeli znaleziona wartość jest mniejsza niż przypisana do sąsiadującego węzła, podmieniamy ją.
+            \item Powtarzamy poprzedni krok, aż zostaną odwiedzone wszystkie węzły. Po zakończeniu każdy węzeł będzie miał przypisaną długość najkrótszej ścieżki od węzła początkowego. Samą ścieżkę możemy odtworzyć od końca, jeżeli przy każdym przypisaniu węzłowi nowej długości będziemy zapamiętywali numer poprzedniego węzła.
+        \end{itemize}
+    \end{itemize}
+    \item Path
+  
+    Klasa przechowuje listę wyliczonych kosztów dojścia do wierzchołków i listę poprzedników.
+        \begin{itemize}
+        \item double getMaxCost()
+        
+        Metoda zwraca największy koszt dojścia ze wszystkich.
+        \item double getMinCost()
+        
+        Metoda zwraca najmniejszy koszt dojścia ze wszystkich.
+        \item void savePath(PrintWriter w,Graph graph, int node)
+        
+        Metoda zapisuje ścieżkę do wierzchołka node do pliku, otwartego w zapisywaczu w.
+    \end{itemize}
+\end{itemize}
+
+\section{Słuchaczy akcji dla każdego z pól, przycisków, paneli}\label{header-n279}
+ Jak widać w opisie logiki programu przechodzimy od ogółu do szczegółu i jeśli programujemy np. w Javie, i jeśli implementujemy GUI, to opisujemy też (wtedy będzie to rozdział 4) słuchaczy akcji dla każdego z pól, przycisków, paneli itp. Jest to w tym przypadku i w tej specyfikacji bardzo ważne, ponieważ dobry opis pola i jego słuchacza akcji odciąży w momencie programowania nas z zastanawiania się "jak to powinno być zrobione?", by móc spokojnie zająć się tym, by to po prostu było zrobione (jednakże należy pamiętać, że licho nigdy nie śpi i powinniśmy przeznaczyć niewielką część uwagi na poprawność rozwiązania).
+
+\begin{itemize}
+    \item Pole "Size"
+    
+    Pole będzie pobierało od użytkownika rozmiar grafu za pomocą getText().
+    \item Pole "Edge weight range"
+    
+    Pole będzie pobierało od użytkownika zakres wartości wag krawędzi za pomocą getText().
+    \item Przycisk opcji "Connectivity"
+    
+    Element Radio Box będzie pobierało wybraną opcję spójności grafu(jedną na raz) za pomocą ButtonGroup.getSelection().getActionCommand().
+    \item Przycisk "Generate"
+    
+    Przycisk będzie uruchamiał wczytywanie wartości z pól "Size", "Edge weight range" i przycisku opcji "Connectivity", i uruchamiał generator grafu. Słuchaczem akcji występuje okno "Kratka".
+    \item Przycisk "Read"
+    
+    Przycisk uruchomi wyświetlanie okienka do wyboru pliku do wczytania grafu, uruchomi jego wczytanie do programu i narysowanie w interfejsie graficznym.
+    \item Przycisk "Save graph"
+    
+    Przycisk wyświetli okienko do wyboru/utworzenia pliku do zapisania obecnego grafu i uruchomi jego zapisywanie.
+    \item Przycisk "Save path"
+    
+    Przycisk wyświetli okienko do wyboru/utworzenia pliku do zapisania wybranych ścieżek i uruchomi zapisywanie.
+    \item Przycisk "Clear"
+    
+    Przycisk usunie wszystkie wyznaczone ścieżki w grafie.
+    \item Przycisk "Delete"
+    
+    Przycisk usunie rysunek grafu z interfejsu.
+    \item Modify color range
+    
+    Przycisk ?????
+    \item Klikanie lewym klawiszem myszki na wierzchołek
+    
+    Klikanie uruchomi algorytm BFS do sprawdzenia spójności grafu, dalej uruchomi algorytm Dijkstry, przyjmując odznaczony wierzchołek jako początkowy i nada wierzchołkom na rysunku odpowiednie kolory. 
+    
+    \item Klikanie prawym klawiszem myszki na wierzchołek
+    
+    Klikanie uruchomi narysowanie ścieżki od poprzednio wybranego wierzchołka początkowego do zaznaczonego.
+\end{itemize}
+
+\section{Budowa GUI}\label{header-n279}
+
+\begin{figure}[h!]
+\begin{center}
+  \includegraphics[scale=0.6]{graf.png}
+  \end{center}
+  \caption{Projekt głównego okna interfejsu}
+  \label{fig:graf}
+\end{figure}
+
+\section{Testowanie}\label{header-n281}
+
+\section{Diagram klas}\label{header-n283}
+\end{document}
