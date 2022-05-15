@@ -102,7 +102,6 @@ public class Kratka extends Application {
         root.getChildren().add(changescale);
 
 
-
         Scene scene = new Scene(root,850,800);
 
         primarystage.setScene(scene);
