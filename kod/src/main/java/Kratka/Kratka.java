@@ -101,7 +101,6 @@ public class Kratka extends Application {
         Button changescale = new Button("Modify color scale");
         root.getChildren().add(changescale);
 
-
         Scene scene = new Scene(root,850,800);
 
         primarystage.setScene(scene);
