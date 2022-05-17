@@ -76,15 +76,12 @@
 \thispagestyle{empty}
 \newpage
 \section{Informacje ogólne}\label{header-n231}
-Program \texttt{graph} został napisany w języku Java w środowisku programistycznym IntelliJ IDEA. Współpraca i wersjonowanie odbywa się w repozytorium zdalnym w serwisie GitHub.
+Program \texttt{graph} został napisany w języku \texttt{Java} w środowisku programistycznym \texttt{IntelliJ IDEA}. Graficzny interfejs użytkownika został zrealizowany przy użyciu technologii \texttt{JavaFX}. Współpraca i wersjonowanie odbywa się w repozytorium zdalnym w serwisie \texttt{GitHub}.
 
-Rozdział 1: Informacje ogólne: Ja w tym rozdziale umieściłem ogólne parametry uruchomieniowe programu, np. wielkość okienka, styl domyślny, położenie okna po uruchomieniu.
-
-Po uruchomieniu programu wyświela się okno o wymiarach 800 x 600 przedstawiające główny interfejs aplikacji.
-Wielkość okienka: 800 x 600.
+Po uruchomieniu programu wyświela się okno o wymiarach 850 x 800 przedstawiające główny interfejs aplikacji. Cały interfejs programu jest przedstawiony w trybie graficznym. Argumenty określające parametry generowanego grafu są przekazywane przez użytkownika z klawiatury do konkretnych pól edycyjnych lub poprzez przycisk opcji (w przypadku wyboru spójności). Reszta pól to przyciski wywołujące akcje, tj. zapisywanie, wczytywanie, generowanie grafu itd. Po podjęciu akcji przez użytkownika wygenerowany lub wczytany graf wyświetli się na czarnym polu na środku ekranu. Działanie wyboru węzłów i rysowania ścieżek odbywają się na głównym oknie interfejsu. Przyciski \texttt{save graph}, \texttt{save path}, \texttt{read} inicjują pojawienie się nowych okien z opcjami wyboru plików do zapisu/wczytania. Nowe okna są również inicjowane w przypadku wystąpienia komunikatów z ostrzeżeniem/błędem oraz przy wyborze palety kolorów używanych do kolorowania grafu. Wszystkie z okien można zamknąć przyciskiem \texttt{"x"} lub po zatwierdzeniu zmian, powracając w ten sposób do głównego okna.
 
 \section{Opis modułów, pakietów i narzędzi}\label{header-n233}
-Podrozdział: Moduł/pakiet - opis: W każdym z podrozdziałów opisujemy oddzielny moduł programu tzn. główne zadanie i powiązania między innymi modułami.
+Przy tworzeniu programu zostały użyte nastąpujące dodatki:
 
 \begin{itemize}
     \item Moduł javafx.controls
