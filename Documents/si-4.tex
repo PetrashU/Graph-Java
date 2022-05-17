@@ -80,9 +80,10 @@ Program \texttt{graph} został napisany w języku Java w środowisku programisty
 
 Rozdział 1: Informacje ogólne: Ja w tym rozdziale umieściłem ogólne parametry uruchomieniowe programu, np. wielkość okienka, styl domyślny, położenie okna po uruchomieniu.
 
+Po uruchomieniu programu wyświela się okno o wymiarach 800 x 600 przedstawiające główny interfejs aplikacji.
 Wielkość okienka: 800 x 600.
 
-\section{Opis modułów/pakietów}\label{header-n233}
+\section{Opis modułów, pakietów i narzędzi}\label{header-n233}
 Podrozdział: Moduł/pakiet - opis: W każdym z podrozdziałów opisujemy oddzielny moduł programu tzn. główne zadanie i powiązania między innymi modułami.
 
 \begin{itemize}
@@ -98,7 +99,17 @@ Podrozdział: Moduł/pakiet - opis: W każdym z podrozdziałów opisujemy oddzie
     \item Pakiet java.io
    
     Dostarcza obsługę operacji wejścia/wyjścia.
+    \item Biblioteka JUnit 
+    
+    Służy do przeprowadzania testów jednostkowych.
+    \item Narzędzie Maven 
+    
+    Umożliwia automatyzację procesu budowania aplikacji.
+    
+    
 \end{itemize}
+
+\section{Diagram klas}\label{header-n283}
 
 \section{Opis klas}\label{header-n233}
 Podrozdział: Klasa - opis: W tym rozdziale opisujemy w jakim pakiecie znajduje się klasa, po czym dziedziczy, jakie klasy implementuje, jakie spełnia zadanie biznesowe, krótko opisujemy konstruktor.
@@ -107,7 +118,7 @@ Podpodrozdział: Metoda: Opisujemy oraz metody, a także pola wraz z nazwami i z
 
 Pakiet "Kratka":
 \begin{itemize}
-    \item Kratka dziedziczy po Aplication
+    \item Kratka dziedziczy po Application
     
     Klasa odpowiada za wygląd i funkcjonowanie interfejsu graficznego. Zawiera funkcję main, uruchamiającą program. 
     
@@ -215,19 +226,19 @@ Pakiet "Graph":
     Pole będzie pobierało od użytkownika zakres wartości wag krawędzi za pomocą getText().
     \item Przycisk opcji "Connectivity"
     
-    Element Radio Box będzie pobierało wybraną opcję spójności grafu(jedną na raz) za pomocą ButtonGroup.getSelection().getActionCommand().
+    Element Radio Box będzie pobierał wybraną opcję spójności grafu (jedną na raz) za pomocą ButtonGroup.getSelection().getActionCommand().
     \item Przycisk "Generate"
     
-    Przycisk będzie uruchamiał wczytywanie wartości z pól "Size", "Edge weight range" i przycisku opcji "Connectivity", i uruchamiał generator grafu. Słuchaczem akcji występuje okno "Kratka".
+    Przycisk będzie uruchamiał wczytywanie wartości z pól "Size", "Edge weight range" i przycisku opcji "Connectivity", i uruchamiał generator grafu. Słuchaczem akcji występuje okno "Kratka". 
     \item Przycisk "Read"
     
     Przycisk uruchomi wyświetlanie okienka do wyboru pliku do wczytania grafu, uruchomi jego wczytanie do programu i narysowanie w interfejsie graficznym.
     \item Przycisk "Save graph"
     
-    Przycisk wyświetli okienko do wyboru/utworzenia pliku do zapisania obecnego grafu i uruchomi jego zapisywanie.
+    Przycisk wyświetli okienko do wyboru/utworzenia pliku do zapisania obecnego grafu i uruchomi jego zapisywanie w formacie tekstowym.
     \item Przycisk "Save path"
     
-    Przycisk wyświetli okienko do wyboru/utworzenia pliku do zapisania wybranych ścieżek i uruchomi zapisywanie.
+    Przycisk wyświetli okienko do wyboru/utworzenia pliku do zapisania wybranych ścieżek i uruchomi zapisywanie w formacie tekstowym.
     \item Przycisk "Clear"
     
     Przycisk usunie wszystkie wyznaczone ścieżki w grafie.
@@ -236,14 +247,16 @@ Pakiet "Graph":
     Przycisk usunie rysunek grafu z interfejsu.
     \item Modify color range
     
-    Przycisk ?????
+    Przycisk zainicjuje wywołanie okna z wyborem zakresu kolorów używanych do rysowania ścieżek w grafie. Możliwy będzie wybór koloru oznaczającego wierzchołek o maksmalnym i minimalnym koszcie dojścia, krawędź o największej i najmniejszej wadze oraz kolor używany do rysowania ścieżki.
     \item Klikanie lewym klawiszem myszki na wierzchołek
     
-    Klikanie uruchomi algorytm BFS do sprawdzenia spójności grafu, dalej uruchomi algorytm Dijkstry, przyjmując odznaczony wierzchołek jako początkowy i nada wierzchołkom na rysunku odpowiednie kolory. 
+    Kliknięcie na dany wierzchołek lewym przyciskiem myszy oznaczy go jako wierzchołek początkowy. Możliwe jest ponowne wybranie wierzchołka początkowego poprzez kliknięcie na inny wierzchołek. Dopóki nie zostanie wybrany wierzchołek końcowy, to nie rozpocznie się żadna akcja. 
+    
     
     \item Klikanie prawym klawiszem myszki na wierzchołek
     
-    Klikanie uruchomi narysowanie ścieżki od poprzednio wybranego wierzchołka początkowego do zaznaczonego.
+    Kliknięcie na dany wierzchołek prawym przyciskiem myszy oznaczy go jako wierzchołek końcowy. Wybranie wierzchołka końcowego musi nastąpić po uprzednim wybraniu wierzchołka początkowego (kolejność wyboru nie może być zmieniona). Jeśli uprzednio żaden wierzchołek nie został wybrany jako początkowy, to nie rozpocznie się żadna akcja. W przypadku, gdy wierzchołki zostaną wybrane prawidłowo, uruchomiony zostanie algorytm BFS do sprawdzenia spójności grafu. Po jego pomyślnym zakończeniu zostanie uruchomiony algorytm Dijkstry. Nastąpi przypisanie kolorów do każdego z wierzchołków z zakresu Node Color Range. Wartości kolorów odwzorowują koszty dojścia do każdego z wierzchołków od wierzchołka początkowego. Najkrótsza ścieżka między wierzchołkiem końcowym a początkowym zostanie narysowana i pokolorowana (w przypadku domyślnym) na biało.
+
 \end{itemize}
 
 \section{Budowa GUI}\label{header-n279}
@@ -257,6 +270,6 @@ Pakiet "Graph":
 \end{figure}
 
 \section{Testowanie}\label{header-n281}
+Testy są generowane przy pomocy biblioteki JUnit umożliwiającej przeprowadzanie testów jednostkowych. Testy przechowywane są w folderze \texttt{src/test/java}
 
-\section{Diagram klas}\label{header-n283}
 \end{document}
