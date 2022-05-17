@@ -144,14 +144,19 @@ Pakiet "Kratka":
     \item void changeMax(double max)
     
     Ustawia max jako wartość maksymalną na skali.
+    
+    \item void changeMinColor(Color min)
+    
+    Metoda pozwala zmienić kolor wartości minimalnej na wybrany.
+    \item void changeMaxColor(Color max)
+    
+    Metoda pozwala zmienić kolor wartości maksymalnej na wybrany.
     \item color ColorOfValue(double value)
     
     Zwraca kolor, odpowiadający wartości value zgodnie ze skalą.
     \item image DrawColorScale(int width, int height)
     
     Tworzy i zwraca rysunek skali kolorów o szerokości width i wysokości height. 
-    
-    ???? Może dodać coś o ustaleniu kolorów przez użytkownika???????
     \end{itemize}
 \end{itemize}
 
@@ -171,7 +176,7 @@ Pakiet "Graph":
         \item void generateGraph(boolean connect)
         
         Metoda generuje krawędzi do grafu. Spójność jest określona przez flagę connect.
-        \item void readGraph(reader???? r)
+        \item void readGraph(Reader r)
         
         Metoda wykorzystuję plik, otwarty w czytniku r, nadaje grafu wczytane wartości liczb wierszy i kolumn i dodaje krawędzi.
         \item void saveGraph(PrintWriter w)
@@ -247,7 +252,7 @@ Pakiet "Graph":
     Przycisk usunie rysunek grafu z interfejsu.
     \item Modify color range
     
-    Przycisk zainicjuje wywołanie okna z wyborem zakresu kolorów używanych do rysowania ścieżek w grafie. Możliwy będzie wybór koloru oznaczającego wierzchołek o maksmalnym i minimalnym koszcie dojścia, krawędź o największej i najmniejszej wadze oraz kolor używany do rysowania ścieżki.
+    Przycisk zainicjuje wywołanie okna z wyborem zakresu kolorów używanych do rysowania ścieżek w grafie. Możliwy będzie wybór koloru oznaczającego wierzchołek o maksymalnym i minimalnym koszcie dojścia, krawędź o największej i najmniejszej wadze oraz kolor używany do rysowania ścieżki.
     \item Klikanie lewym klawiszem myszki na wierzchołek
     
     Kliknięcie na dany wierzchołek lewym przyciskiem myszy oznaczy go jako wierzchołek początkowy. Możliwe jest ponowne wybranie wierzchołka początkowego poprzez kliknięcie na inny wierzchołek. Dopóki nie zostanie wybrany wierzchołek końcowy, to nie rozpocznie się żadna akcja. 
