@@ -109,13 +109,11 @@ Przy tworzeniu programu zostały użyte nastąpujące dodatki:
 \section{Diagram klas}\label{header-n283}
 
 \section{Opis klas}\label{header-n233}
-Podrozdział: Klasa - opis: W tym rozdziale opisujemy w jakim pakiecie znajduje się klasa, po czym dziedziczy, jakie klasy implementuje, jakie spełnia zadanie biznesowe, krótko opisujemy konstruktor.
-
-Podpodrozdział: Metoda: Opisujemy oraz metody, a także pola wraz z nazwami i zwięzłą definicją. Prototyp: nagłówek metody. Zadanie: cóż czyni. Algorytm: jak to czyni - krok po kroku. Wartość zwracana: co zwraca.
+Klasy zawarte są w jednym z dwóch pakietów:
 
 Pakiet "Kratka":
 \begin{itemize}
-    \item Kratka dziedziczy po Application
+    \item Kratka (dziedziczy po Application)
     
     Klasa odpowiada za wygląd i funkcjonowanie interfejsu graficznego. Zawiera funkcję main, uruchamiającą program. 
     
@@ -123,7 +121,7 @@ Pakiet "Kratka":
     \begin{itemize}
         \item start
         
-        Metoda zastępuję metodę start, zdefiniowaną w klasie Aplication. W metodzie są zdefiniowane właściwości okna "Kratka", dodane etykiety, pola tekstowe, pole wyboru, przyciski z ustalonymi działaniami. 
+        Metoda zastępuję metodę start, zdefiniowaną w klasie Application. W metodzie są zdefiniowane właściwości okna "Kratka", dodane etykiety, pola tekstowe, pole wyboru, przyciski z ustalonymi działaniami. 
         \item main
         
         Metoda odpowiada za uruchomienie aplikacji.
@@ -161,7 +159,7 @@ Pakiet "Graph":
 \begin{itemize}
     \item Graph
     
-    Klasa definiuje postać przechowywania grafu i zawiera działania na grafie.
+    Klasa definiuje postać przechowywania grafu i zawiera działania na grafie.  Reprezentacją grafu w kodzie jest macierz sąsiedztwa.
     Metody:
     \begin{itemize}
         \item double getMaxWeight()
@@ -172,10 +170,10 @@ Pakiet "Graph":
         Metoda zwraca najmniejszą wagę krawędzi w grafie.
         \item void generateGraph(boolean connect)
         
-        Metoda generuje krawędzi do grafu. Spójność jest określona przez flagę connect.
+        Metoda generuje krawędzie do grafu. Spójność jest określona przez flagę connect.
         \item void readGraph(Reader r)
         
-        Metoda wykorzystuję plik, otwarty w czytniku r, nadaje grafu wczytane wartości liczb wierszy i kolumn i dodaje krawędzi.
+        Metoda wykorzystuje plik otwarty w czytniku r, nadaje grafowi wczytane wartości liczb wierszy i kolumn i dodaje krawędzie.
         \item void saveGraph(PrintWriter w)
         
         Metoda zapisuje graf do pliku, otwartego w zapisywaczu w.
@@ -210,14 +208,13 @@ Pakiet "Graph":
         \item double getMinCost()
         
         Metoda zwraca najmniejszy koszt dojścia ze wszystkich.
-        \item void savePath(PrintWriter w,Graph graph, int node)
+        \item void savePath(PrintWriter w, Graph graph, int node)
         
         Metoda zapisuje ścieżkę do wierzchołka node do pliku, otwartego w zapisywaczu w.
     \end{itemize}
 \end{itemize}
 
-\section{Słuchaczy akcji dla każdego z pól, przycisków, paneli}\label{header-n279}
- Jak widać w opisie logiki programu przechodzimy od ogółu do szczegółu i jeśli programujemy np. w Javie, i jeśli implementujemy GUI, to opisujemy też (wtedy będzie to rozdział 4) słuchaczy akcji dla każdego z pól, przycisków, paneli itp. Jest to w tym przypadku i w tej specyfikacji bardzo ważne, ponieważ dobry opis pola i jego słuchacza akcji odciąży w momencie programowania nas z zastanawiania się "jak to powinno być zrobione?", by móc spokojnie zająć się tym, by to po prostu było zrobione (jednakże należy pamiętać, że licho nigdy nie śpi i powinniśmy przeznaczyć niewielką część uwagi na poprawność rozwiązania).
+\section{Obsługa zdarzeń}\label{header-n279}
 
 \begin{itemize}
     \item Pole "Size"
@@ -231,16 +228,38 @@ Pakiet "Graph":
     Element Radio Box będzie pobierał wybraną opcję spójności grafu (jedną na raz) za pomocą ButtonGroup.getSelection().getActionCommand().
     \item Przycisk "Generate"
     
-    Przycisk będzie uruchamiał wczytywanie wartości z pól "Size", "Edge weight range" i przycisku opcji "Connectivity", i uruchamiał generator grafu. Słuchaczem akcji występuje okno "Kratka". 
+    Przycisk będzie uruchamiał wczytywanie wartości z pól "Size", "Edge weight range" i przycisku opcji "Connectivity" i uruchamiał generator grafu. Wartości te będą przekazywane do generatora w klasie Graph.
     \item Przycisk "Read"
     
-    Przycisk uruchomi wyświetlanie okienka do wyboru pliku do wczytania grafu, uruchomi jego wczytanie do programu i narysowanie w interfejsie graficznym.
+    Przycisk uruchomi wyświetlanie okienka do wyboru pliku do wczytania grafu, uruchomi jego wczytanie do programu i narysowanie w interfejsie graficznym. Jedynym akceptowanym formatem pliku jest format tekstowy \texttt{*.txt} (niemożliwe jest wybranie pliku o innym formacie). Filtrowanie formatu odbywa się przy użyciu getExtensionFilters().addAll(). Sprawdzana będzie poprawność zawartości pliku, to znaczy jego zgodność z przyjętą konwencją zapisu grafu, która jest następująca:
+    
+    W pierwszej linii pliku podana jest liczba wierszy i kolumn grafu. Parametry do jednego węzła są definiowane poniżej w jednej linii. Numer węzła docelowego jest oddzielany od wagi spacją i znakiem \texttt{:}. Parametry dla jednego węzła są oddzielane dwiema spacjami.
+    
+    Przykładowy plik:
+    \begin{verbatim}
+2 3
+	 1 :0.8864916775696521  2 :0.2187532451857941 
+	 0 :0.2637754478952221  5 :0.5486221194511974
+	 3 :0.5380334165340379
+	 2 :0.5486221194511974  5 :0.25413610146892474
+	 3 :0.31509645530519625  0 :0.40326574227480094
+	 4 :0.44272335750313074
+\end{verbatim}
+    Jeżeli format będzie prawidłowy, wywołana zostanie metoda rysująca graf. W przypadku błędu pojawi się wyjątek i zostanie wyświetlony komunikat.
+    
     \item Przycisk "Save graph"
     
-    Przycisk wyświetli okienko do wyboru/utworzenia pliku do zapisania obecnego grafu i uruchomi jego zapisywanie w formacie tekstowym.
+    Przycisk wyświetli okienko do utworzenia pliku do zapisania obecnego grafu i uruchomi jego zapisywanie w formacie tekstowym \texttt{*.txt}. Konwencja zapisu grafu do pliku jest tożsama z przedstawioną powyżej (Przycisk Read).
     \item Przycisk "Save path"
     
-    Przycisk wyświetli okienko do wyboru/utworzenia pliku do zapisania wybranych ścieżek i uruchomi zapisywanie w formacie tekstowym.
+    Przycisk wyświetli okienko do utworzenia pliku do zapisania wybranych ścieżek i uruchomi zapisywanie w formacie tekstowym \texttt{*.txt}. Przykładowa treść zapisywana do pliku wygląda następująco:
+    
+    \begin{verbatim}
+    Najkrótsza ścieżka:
+        0 -0.1635472537235685- 3 -0.6524342534143475- 5
+    Długość ścieżki jest równa 0.815981507137916
+        \end{verbatim}
+    Do pliku zapisywane będą wszystkie ścieżki na rysunku grafu obecne w momencie zapisywania. 
     \item Przycisk "Clear"
     
     Przycisk usunie wszystkie wyznaczone ścieżki w grafie.
