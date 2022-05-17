@@ -10,6 +10,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import java.io.File;
 
 public class Kratka extends Application {
 
@@ -61,7 +64,15 @@ public class Kratka extends Application {
         root.getChildren().add(firstline);
 
         Button generate = new Button("Generate");
+        
         Button read = new Button("Read");
+        read.setOnAction(e ->{
+            FileChooser filechooser = new FileChooser();
+            filechooser.getExtensionFilters().addAll(new ExtensionFilter("txt file", "*.txt"));
+            File readfile = filechooser.showOpenDialog(primarystage);
+        });
+        root.getChildren().add(read);
+        
         Button savegraph = new Button("Save graph");
         Button savepath = new Button("Save path");
         Button clean = new Button("Clean");
