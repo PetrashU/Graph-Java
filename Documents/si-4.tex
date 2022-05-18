@@ -291,6 +291,26 @@ Pakiet "Graph":
 \end{figure}
 
 \section{Testowanie}\label{header-n281}
-Testy są generowane przy pomocy biblioteki JUnit umożliwiającej przeprowadzanie testów jednostkowych. Testy przechowywane są w folderze \texttt{src/test/java}
+Testy są generowane przy pomocy biblioteki JUnit umożliwiającej przeprowadzanie testów jednostkowych. Testy przechowywane są w folderze \texttt{src/test/java}. Testowana jest większość obecnych w kodzie metod, a rodzaj asercji jest zależny od typu zwracanego przez metodę.
 
+\begin{itemize}
+    \item assertTrue();
+    
+    używane do metod zwracających typ boolean, np. \texttt{boolean bfs()}. Przykładowo, algorytm bfs jest testowany na znanych grafach (zarówno spójnych i niespójnych); dla spójnego powinien zwracać wartość true, a dla niespójnego - false.
+    
+    \item assertEquals();
+    
+    używane do metod zwracających typ double, np. \texttt{double getMaxCost(), double getMaxWeight()}. W tych testach korzystamy ze znanych wartości długości wag i kosztów w danym grafie i przyrównujemy wartości zwrócone przez metody z oczekiwanymi.
+    
+    \item assertArrayEquals();
+    
+    używane do algorytmu Dijkstry w celu sprawdzenia poprawności wyznaczania najkrótszej ścieżki oraz jej przebiegu.
+    
+    
+    \item assertThrows();
+    
+    używane do metod zwracających typ void, np. \texttt{void readGraph(Reader r), void generateGraph(boolean connect)}. Testy mają na celu wyłapanie błędów dotyczących nieprawidłowo podanych parametrów przy tworzeniu obiektu grafu, niezgodności formatu wczytywanego pliku.
+\end{itemize}
+
+Reszta testowania odbywa się w środowisku graficznym, poprzez korzystanie z opcji interfejsu i sprawdzanie, czy wyniki działania są zgodne z oczekiwanymi.
 \end{document}
