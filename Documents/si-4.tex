@@ -319,5 +319,37 @@ Testy są generowane przy pomocy biblioteki JUnit umożliwiającej przeprowadzan
     używane do metod zwracających typ void, np. \texttt{void readGraph(Reader r), void generateGraph(boolean connect)}. Testy mają na celu wyłapanie błędów dotyczących nieprawidłowo podanych parametrów przy tworzeniu obiektu grafu, niezgodności formatu wczytywanego pliku.
 \end{itemize}
 
+Przykładowe testy jednostkowe:
+
+Poniższy test ma na celu sprawdzenie, czy metoda \texttt{boolean bfs()} zwróci wartość \texttt{true} w przypadku podania grafu spójnego.
+
+\begin{verbatim}
+@Test
+public void ConnectedGraphTrue1(){
+    
+    Graph graph = new Graph(2, 3, {0.00, 1.00, 0.00, 4.00, 0.00,
+    0.00, 1.00, 0.00, 3.00, 0.00, 0.00, 0.00, 0.00, 3.00, 0.00,
+    0.00, 0.00, 7.00, 4.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,
+    0.00, 0.00, 0.00, 0.00, 2.00, 0.00, 0.00, 7.00, 0.00, 2.00, 0.00}
+        
+    Assert.assertTrue(graph.bfs());
+    }
+\end{verbatim}
+
+Poniższy test ma na celu sprawdzenie, czy metoda \texttt{double getMaxWeight()} zwróci największą długość wagi w grafie.
+
+\begin{verbatim}
+@Test
+public void MaxWeight7(){
+    
+    Graph graph = new Graph(2, 3, {0.00, 1.00, 0.00, 4.00, 0.00,
+    0.00, 1.00, 0.00, 3.00, 0.00, 0.00, 0.00, 0.00, 3.00, 0.00,
+    0.00, 0.00, 7.00, 4.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,
+    0.00, 0.00, 0.00, 0.00, 2.00, 0.00, 0.00, 7.00, 0.00, 2.00, 0.00}
+        
+    Assert.assertEquals(7, graph.getMaxWeight());
+    }
+\end{verbatim}
+
 Reszta testowania odbywa się w środowisku graficznym, poprzez korzystanie z opcji interfejsu i sprawdzanie, czy wyniki działania są zgodne z oczekiwanymi.
 \end{document}
