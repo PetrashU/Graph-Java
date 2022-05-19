@@ -11,6 +11,9 @@ public class ColorScale {
     public double max = 0;
     public double min = 10;
 
+    public double minColor = Color.BLUE.getHue();
+    public double maxColor = Color.RED.getHue();
+
     public ColorScale(double min, double max){
         this.min = min;
         this.max = max;
@@ -23,11 +26,15 @@ public class ColorScale {
     public void changeMax(double max){
         this.max = max;
     }
+
+    public void changeMinColor(Color min){this.minColor = min.getHue();}
+
+    public void changeMaxColor(Color max){this.maxColor = max.getHue();}
     public Color ColorOfValue (double value){
         if (value < min || value > max){
             return Color.BLACK;
         }
-        double hue = Color.BLUE.getHue() + (Color.RED.getHue() - Color.BLUE.getHue() * (value - min)/(max - min));
+        double hue = minColor + maxColor - minColor * (value - min)/(max - min);
         return Color.hsb(hue, 1.0, 1.0);
     }
 

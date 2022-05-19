@@ -2,10 +2,15 @@ package graph;
 
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Graph {
     public int row;
     public int col;
+
+    public double minWeight;
+    public double maxWeight;
     public double weights[];
 
     public Graph(){
@@ -43,17 +48,70 @@ public class Graph {
     }
     public void generateGraph(boolean connect){
 
-    };
+    }
     public void readGraph(Reader r){
 
-    };
+    }
     public void SaveGraph(PrintWriter w){
 
-    };
-   /* public boolean bfs(){
-    };
+    }
+    public boolean bfs(){
+        ArrayList<Integer> queue = new ArrayList<>();		//kolejka pryorytetowa
+        boolean[] flag= new boolean[col * row];		//flaga odwiedzenia wierzchołka
+        int k = 0;
+        int n = 1;
+        queue.add(0);
+        Arrays.fill(flag, false);
+        for (int i = 0; i < n; i++){		//przechodzimy po wszystkich wierzchołkach z kolejki
+            flag[queue.get(k)]= true;			//odznaczamy obecny wierzchołek jako odwiedzony
+            for (int j = 0; j < (col * row); j++)
+                if (this.weights[queue.get(k) * col * row + j] != 0 && !flag[j])	//szukamy krawędzi
+                {
+                    n++;		//zwiększamy liczbę wierzchołków w kolecje
+                    queue.add(j);	//dodajemy do kolejki wierzchołek, do którego prowadzi krawędź
+                }
+            k++;	//idziemy do kolejnego numera w kolejce
+        }
+        //sprawdzamy odwiedzenie wszystkich wierzchołków
+        for (int i=0; i < (col * row); i++)
+            if (!flag[i])
+                return false;
+        return true;    //spójny
+    }
     public Path dijkstra(int st){
+        int[] q = new int[row*col];		//tabela, pokazująca, czy odpowiedni węzeł był odwiedzony
+        int min_i;
+        double tmp, min;
+        Path path = new Path();
+        Arrays.fill(q, 0);
+        Arrays.fill(path.cost, Double.POSITIVE_INFINITY);
+        Arrays.fill(path.last, -1);
+        path.cost[st] = 0;
+        do{				//wykonujemy pętlę aż indeks węzła o najmniejszym koszcie dojścia nie będzie pusty
+            min = Double.POSITIVE_INFINITY;
+            min_i = -1;
+            for(int i = 0; i < (row * col); i++){	//szukamy węzeł o najmniejszym koszcie dojścia
+                if ((q[i] == 0) && (path.cost[i] < min)){
+                    min = path.cost[i];
+                    min_i = i;
+                }
+            }
+            if (min_i != -1)
+            {
+                for( int i = 0; i < (col*row); i++){		//przypisujemy dojścia do sąsiadów
+                    if (this.weights[min_i * col * row + i] > 0)
+                    {
+                        tmp = min + this.weights[min_i * col * row + i];
+                        if (tmp < path.cost[i]){
+                            path.cost[i] = tmp;
+                            path.last[i] = min_i;
+                        }
+                    }
+                }
+                q[min_i] = 1;
+            }
+        } while (min_i != -1);
+        return path;
+    }
 
-    };
-*/
 }

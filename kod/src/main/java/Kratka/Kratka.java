@@ -1,6 +1,9 @@
 package Kratka;
 
+import graph.Graph;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -13,6 +16,8 @@ import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import java.io.File;
+import java.util.Objects;
+import java.util.Random;
 
 public class Kratka extends Application {
 
@@ -21,30 +26,34 @@ public class Kratka extends Application {
     public double minweight = 0.0;
     public double maxweight = 10.0;
     public GraphicsContext gc;
+    public Graph graph;
 
-
+    public Label edgemin;
+    public Label edgemax;
+    public Label nodemin;
+    public Label nodemax;
     @Override
     public void start(Stage primarystage) throws Exception {
 
         Label size = new Label("Size:");
-        TextField trow = new TextField();
-        trow.setMaxWidth(50);
-        trow.setText(String.valueOf(row));
+        TextField textrow = new TextField();
+        textrow.setMaxWidth(50);
+        textrow.setText(String.valueOf(row));
         Text sizex = new Text("x");
-        TextField tcol = new TextField();
-        tcol.setMaxWidth(50);
-        tcol.setText(String.valueOf(col));
-        HBox sizebox = new HBox(5,trow,sizex,tcol);
+        TextField textcol = new TextField();
+        textcol.setMaxWidth(50);
+        textcol.setText(String.valueOf(col));
+        HBox sizebox = new HBox(5,textrow,sizex,textcol);
 
         Label weight = new Label("Edge weight range:");
-        TextField weightlow = new TextField();
-        weightlow.setMaxWidth(50);
-        weightlow.setText(String.valueOf(minweight));
+        TextField textweightlow = new TextField();
+        textweightlow.setMaxWidth(50);
+        textweightlow.setText(String.valueOf(minweight));
         Text weightsymbol = new Text("-");
-        TextField weighthigh = new TextField();
-        weighthigh.setMaxWidth(50);
-        weighthigh.setText(String.valueOf(maxweight));
-        HBox weightbox = new HBox(weightlow,weightsymbol,weighthigh);
+        TextField textweighthigh = new TextField();
+        textweighthigh.setMaxWidth(50);
+        textweighthigh.setText(String.valueOf(maxweight));
+        HBox weightbox = new HBox(textweightlow,weightsymbol,textweighthigh);
 
         Label con = new Label("Connectivity");
         RadioButton connected = new RadioButton("Connected");
@@ -64,6 +73,44 @@ public class Kratka extends Application {
         root.getChildren().add(firstline);
 
         Button generate = new Button("Generate");
+        generate.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    String trow = textrow.getText();
+                    String tcol = textcol.getText();
+                    row = Integer.parseInt(trow);
+                    col = Integer.parseInt(tcol);
+                    graph = new Graph();
+                    graph.row = row;
+                    graph.col = col;
+                    String tweightlow = textweightlow.getText();
+                    String tweighthigh = textweighthigh.getText();
+                    minweight = Double.parseDouble(tweightlow);
+                    maxweight = Double.parseDouble(tweighthigh);
+                    graph.minWeight = minweight;
+                    edgemin.setText(String.valueOf(minweight));
+                    graph.maxWeight = maxweight;
+                    edgemax.setText(String.valueOf(maxweight));
+                    RadioButton rb = (RadioButton) connectivity.getSelectedToggle();
+                    String connect = rb.getText();
+                    boolean connection;
+                    if (Objects.equals(connect, "Connected"))
+                        connection = true;
+                    else if (Objects.equals(connect, "Not connected"))
+                        connection = false;
+                    else {
+                        Random random = new Random();
+                        connection = random.nextBoolean();
+                    }
+                    // Test: System.out.println(row + " "+ col +" "+ minweight+ " "+ maxweight+ " "+ connection);
+                    graph.generateGraph(connection);
+                    //draw_graph();  --trzeba napisać
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            }
+        });
         
         Button read = new Button("Read");
         read.setOnAction(e ->{
@@ -77,6 +124,13 @@ public class Kratka extends Application {
         Button savepath = new Button("Save path");
         Button clean = new Button("Clean");
         Button delete = new Button("Delete");
+        delete.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                graph = null;
+                //draw_graph();
+            }
+        });
         HBox secondline = new HBox(70,generate,read,savegraph,savepath,clean,delete);
 
         root.getChildren().add(secondline);
@@ -88,10 +142,9 @@ public class Kratka extends Application {
 
         root.getChildren().add(canvas);
 
-        double edgeweightmin = minweight;
-        double edgeweightmax = maxweight;
-        Label edgemin = new Label(String.valueOf(edgeweightmin));
-        Label edgemax = new Label(String.valueOf(edgeweightmax));
+
+        edgemin = new Label(String.valueOf(minweight));
+        edgemax = new Label(String.valueOf(maxweight));
         Label edgecolor = new Label("Edge color scale");
         HBox colorfirst = new HBox(325, edgemin,edgecolor, edgemax);
         root.getChildren().add(colorfirst);
@@ -103,8 +156,8 @@ public class Kratka extends Application {
 
         double nodecostmin = 0.0;
         double nodecostmax = 10.0;
-        Label nodemin = new Label(String.valueOf(nodecostmin));
-        Label nodemax = new Label(String.valueOf(nodecostmax));
+        nodemin = new Label(String.valueOf(nodecostmin));
+        nodemax = new Label(String.valueOf(nodecostmax));
         Label nodecolor = new Label("Node color scale");
         HBox colorsecond = new HBox(325, nodemin,nodecolor, nodemax);
         root.getChildren().add(colorsecond);
