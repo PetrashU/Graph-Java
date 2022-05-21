@@ -78,6 +78,7 @@ public class Graph {
                     n++;		//zwiększamy liczbę wierzchołków w kolecje
                     queue.add(j);	//dodajemy do kolejki wierzchołek, do którego prowadzi krawędź
                 }
+
             k++;	//idziemy do kolejnego numera w kolejce
         }
         //sprawdzamy odwiedzenie wszystkich wierzchołków
