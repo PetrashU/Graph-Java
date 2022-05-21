@@ -356,6 +356,8 @@ Poniższy test ma na celu sprawdzenie poprawności generowania spójnego grafu p
     @Test
     void CheckGenerationOfConnectedGraph() {
         graph = new Graph(3, 2);
+	graph.minWeight = 0.1;
+	graph.maxWeight = 10;
         graph.generateGraph(true);
         assertTrue(graph.bfs());
     }
@@ -366,6 +368,8 @@ Poniższy test ma na celu sprawdzenie poprawności metod zapisywania i odczytywa
     @Test
     void CheckReadingAndSaving(){
         graph = new Graph(3,2);
+	graph.minWeight = 0.1;
+	graph.maxWeight = 10;
         graph.generateGraph(true);
         File write;
         write = new File("filename.txt");
