@@ -5,6 +5,8 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 public class Graph {
     public int row;
@@ -56,6 +58,34 @@ public class Graph {
                 min = weights[i];
         }
         return min;
+    }
+
+
+    public void drawGraph(GraphicsContext gc){
+        gc.setFill(Color.ANTIQUEWHITE);
+        int nodeSize = 20;
+        int edgeSize = 4*nodeSize;
+        //w razie, gdyby graf się nie zmieścił na ekranie, to zmniejszam rozmiary węzłów i krawędzi aż do skutku
+        //ale nie mniej niż nodeSize = 1 i edgeSize = 4
+        while ((col+1)*edgeSize > 850 || (row+1)*edgeSize > 600){
+            if (nodeSize == 1){
+                break;
+            }
+            nodeSize--;
+            edgeSize = 4*nodeSize;
+        }
+        //skalowanie współrzędnej x dla pierwszego węzła w kolumnie
+        //oraz współrzędnej y dla pierwszego węzła w wierszu
+        int xnode = (850 - (col-1)*edgeSize)/2 - nodeSize/2;
+        int ynode = (600 - (row-1)*edgeSize)/2 - nodeSize/2;
+        System.out.println(xnode);
+        System.out.println(ynode);
+        for (int i=0; i<col; i++){
+            for (int j=0; j<row; j++){
+                gc.fillOval(xnode + i*edgeSize, ynode + j*edgeSize, nodeSize, nodeSize);
+            }
+        }
+
     }
     public void generateGraph(boolean connect) {
         Random random = new Random();
