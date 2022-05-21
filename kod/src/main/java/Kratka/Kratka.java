@@ -15,6 +15,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+
+import javax.swing.*;
 import java.io.File;
 import java.util.Objects;
 import java.util.Random;
@@ -80,14 +82,54 @@ public class Kratka extends Application {
                     String trow = textrow.getText();
                     String tcol = textcol.getText();
                     row = Integer.parseInt(trow);
+                    if (row <= 0 ){
+                        textrow.setStyle("-fx-text-box-border: red;");
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Liczba wierszy nie może być równa lub mniejsza 0");
+                        alert.setContentText("Proszę zmienić podaną liczbę wierszy");
+                        alert.showAndWait();
+                        textrow.setStyle("");
+                        return;
+                    }
                     col = Integer.parseInt(tcol);
+                    if (col <= 0 ){
+                        textcol.setStyle("-fx-text-box-border: red;");
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Liczba kolumn nie może być równa lub mniejsza 0");
+                        alert.setContentText("Proszę zmienić podaną liczbę kolumn");
+                        alert.showAndWait();
+                        textcol.setStyle("");
+                        return;
+                    }
                     graph = new Graph();
                     graph.row = row;
                     graph.col = col;
                     String tweightlow = textweightlow.getText();
                     String tweighthigh = textweighthigh.getText();
                     minweight = Double.parseDouble(tweightlow);
+                    if (minweight < 0 ){
+                        textweightlow.setStyle("-fx-text-box-border: red;");
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Dolna granica zakresu losowanych wag nie może być mniejsza od 0");
+                        alert.setContentText("Proszę zmienić dolną granicę zakresu wag");
+                        alert.showAndWait();
+                        textweightlow.setStyle("");
+                        return;
+                    }
                     maxweight = Double.parseDouble(tweighthigh);
+                    if (maxweight <= 0 ){
+                        textweighthigh.setStyle("-fx-text-box-border: red;");
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Górna granica zakresu losowanych wag nie może być mniejsza lub równa 0");
+                        alert.setContentText("Proszę zmienić górną granicę zakresu wag");
+                        alert.showAndWait();
+                        textweighthigh.setStyle("");
+                        return;
+                    }
                     graph.minWeight = minweight;
                     edgemin.setText(String.valueOf(minweight));
                     graph.maxWeight = maxweight;
@@ -107,7 +149,10 @@ public class Kratka extends Application {
                     graph.generateGraph(connection);
                     //draw_graph();  --trzeba napisać
                 } catch (Exception e) {
-                    System.err.println(e.getMessage());
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(e.getMessage());
+                    alert.showAndWait();
                 }
             }
         });
