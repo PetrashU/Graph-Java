@@ -106,9 +106,7 @@ public class Kratka extends Application {
                         return;
                     }
                     if (graph == null)
-                        graph = new Graph();
-                    graph.row = row;
-                    graph.col = col;
+                        graph = new Graph(row, col);
                     String tweightlow = textweightlow.getText();
                     String tweighthigh = textweighthigh.getText();
                     minweight = Double.parseDouble(tweightlow);
@@ -133,9 +131,9 @@ public class Kratka extends Application {
                         textweighthigh.setStyle("");
                         return;
                     }
-                    //graph.minWeight = minweight;
+                    graph.minWeight = minweight;
                     edgemin.setText(String.valueOf(minweight));
-                    //graph.maxWeight = maxweight;
+                    graph.maxWeight = maxweight;
                     edgemax.setText(String.valueOf(maxweight));
                     RadioButton rb = (RadioButton) connectivity.getSelectedToggle();
                     String connect = rb.getText();
@@ -149,7 +147,12 @@ public class Kratka extends Application {
                         connection = random.nextBoolean();
                     }
                     // Test: System.out.println(row + " "+ col +" "+ minweight+ " "+ maxweight+ " "+ connection);
-                    graph.generateGraph(connection);
+                    graph.generateGraph(connection, minweight, maxweight);
+                    /* wypisywanie wag grafu do testowania
+                    for (int i=0; i<graph.weights.length; i++){
+                        System.out.println(graph.weights[i]);
+                    }
+                    */
                     //drawGraph();  --trzeba napisać
                 } catch (Exception e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -159,7 +162,7 @@ public class Kratka extends Application {
                 }
             }
         });
-        
+
         Button read = new Button("Read");
         read.setOnAction(e ->{
             if (graph == null)
@@ -211,7 +214,7 @@ public class Kratka extends Application {
 
         });
         root.getChildren().add(read);
-        
+
         Button savegraph = new Button("Save graph");
         savegraph.setOnAction(e ->{
             FileChooser filechooser = new FileChooser();
@@ -294,4 +297,3 @@ public class Kratka extends Application {
         launch(args);
     }
 }
-

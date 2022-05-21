@@ -351,5 +351,42 @@ public void MaxWeight7(){
     }
 \end{verbatim}
 
+Poniższy test ma na celu sprawdzenie poprawności generowania spójnego grafu przez metodę \texttt{void generateGraph(boolean connect)}. Będzie także przeprowadzony test na generowanie grafu niespójnego z podobnym algorytmem.
+\begin{verbatim}
+    @Test
+    void CheckGenerationOfConnectedGraph() {
+        graph = new Graph(3, 2);
+        graph.generateGraph(true);
+        assertTrue(graph.bfs());
+    }
+\end{verbatim}
+
+Poniższy test ma na celu sprawdzenie poprawności metod zapisywania i odczytywania pliku \texttt{void saveGraph(PrintWriter w)} i \texttt{void readGraph(Reader r)}. 
+\begin{verbatim}
+    @Test
+    void CheckReadingAndSaving(){
+        graph = new Graph(3,2);
+        graph.generateGraph(true);
+        File write;
+        write = new File("filename.txt");
+        try {
+            PrintWriter w = new PrintWriter (write);
+            graph.saveGraph(w);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Graph graph1 = new Graph();
+        Reader r;
+        try {
+            r = new FileReader(write);
+            graph1.readGraph(r);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        assertEquals(graph.row, graph1.row);
+        assertEquals(graph.col, graph1.col);
+        assertArrayEquals(graph.weights, graph1.weights);
+    }
+\end{verbatim}
 Reszta testowania odbywa się w środowisku graficznym, poprzez korzystanie z opcji interfejsu i sprawdzanie, czy wyniki działania są zgodne z oczekiwanymi.
 \end{document}

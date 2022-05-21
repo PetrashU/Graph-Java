@@ -4,14 +4,17 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Graph {
     public int row;
     public int col;
+
+    public int iter = row*col;
     public double weights[];
 
-   // public double minWeight;
-    //public double maxWeight;
+    public double minWeight;
+    public double maxWeight;
     public String ErrorMassage;
     public ArrayList<String> WarningMassage;
 
@@ -21,7 +24,7 @@ public class Graph {
     public Graph(int row, int col){
         this.row = row;
         this.col = col;
-        int iter = col * row;
+        iter = col * row;
         weights = new double[iter*iter];
     }
     public Graph(int row, int col, double[] weights){
@@ -54,8 +57,38 @@ public class Graph {
         }
         return min;
     }
-    public void generateGraph(boolean connect){
+    public void generateGraph(boolean connect, double minWeight, double maxWeight) {
+        Random random = new Random();
+        boolean condition1, condition2, condition3, condition4;
+        for (int i = 0; i < iter * iter; i++) {
+            weights[i] = 0.0;
+        }
+        int blank = -1;
+        if (!connect) {
+            blank = random.nextInt() % iter;
+        }
+        for (int i = 0; i < iter; i++) {
+            for (int j = i; j < iter; j++) {
+                condition1 = (j == i + 1 && ((i + 1) % col != 0));
+                condition2 = (j == i - 1 && ((i % col) != 0));
+                condition3 = (j == i - col && i >= col);
+                condition4 = (j == i + col && i < iter - col);
 
+                if (condition1 || condition2 || condition3 || condition4) {
+                    if (connect || random.nextDouble(1) > 0.5) {
+                        weights[i * iter + j] = minWeight + random.nextDouble(1) * (maxWeight - minWeight);
+                        weights[j * iter + i] = weights[i * iter + j];
+                    } else {
+                        weights[i * iter + j] = 0.0;
+                        weights[j * iter + i] = 0.0;
+                    }
+                    if (i == blank || j == blank) {
+                        weights[i * iter + j] = 0.0;
+                        weights[j * iter + i] = 0.0;
+                    }
+                }
+            }
+        }
     }
     public void readGraph(Reader r){
 
