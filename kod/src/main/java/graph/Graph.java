@@ -5,6 +5,8 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+
+import Kratka.ColorScale;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -63,10 +65,9 @@ public class Graph {
 
     public void drawGraph(GraphicsContext gc){
         gc.setFill(Color.ANTIQUEWHITE);
+        gc.setLineWidth(2);
         int nodeSize = 20;
         int edgeSize = 4*nodeSize;
-        //w razie, gdyby graf się nie zmieścił na ekranie, to zmniejszam rozmiary węzłów i krawędzi aż do skutku
-        //ale nie mniej niż nodeSize = 1 i edgeSize = 4
         while ((col+1)*edgeSize > 850 || (row+1)*edgeSize > 600){
             if (nodeSize == 1){
                 break;
@@ -74,15 +75,24 @@ public class Graph {
             nodeSize--;
             edgeSize = 4*nodeSize;
         }
-        //skalowanie współrzędnej x dla pierwszego węzła w kolumnie
-        //oraz współrzędnej y dla pierwszego węzła w wierszu
         int xnode = (850 - (col-1)*edgeSize)/2 - nodeSize/2;
         int ynode = (600 - (row-1)*edgeSize)/2 - nodeSize/2;
-        System.out.println(xnode);
-        System.out.println(ynode);
-        for (int i=0; i<col; i++){
-            for (int j=0; j<row; j++){
-                gc.fillOval(xnode + i*edgeSize, ynode + j*edgeSize, nodeSize, nodeSize);
+        double[][] nodeCoordinates = new double[iter][2];
+        //wstawiam rząd po rzędzie czyli numeruję od lewej do prawej i schodzę w dół
+        for (int i=0; i<row; i++) {
+            for (int j = 0; j < col; j++) {
+                nodeCoordinates[i*col + j][0] = xnode + j * edgeSize;
+                nodeCoordinates[i*col + j][1] = ynode + i * edgeSize;
+                gc.fillOval(nodeCoordinates[i*col + j][0], nodeCoordinates[i*col + j][1], nodeSize, nodeSize);
+            }
+        }
+        ColorScale colorscale = new ColorScale(minWeight, maxWeight);
+        for (int i=0; i<iter; i++){
+            for (int j=i; j<iter; j++){
+                gc.setStroke(colorscale.ColorOfValue(weights[i*iter + j]));
+                if (weights[i*iter + j] > 0 ) {
+                    gc.strokeLine(nodeCoordinates[i][0]+nodeSize/2, nodeCoordinates[i][1]+nodeSize/2, nodeCoordinates[j][0]+nodeSize/2, nodeCoordinates[j][1]+nodeSize/2);
+                }
             }
         }
 
