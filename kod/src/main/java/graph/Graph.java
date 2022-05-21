@@ -57,7 +57,7 @@ public class Graph {
         }
         return min;
     }
-    public void generateGraph(boolean connect, double minWeight, double maxWeight) {
+    public void generateGraph(boolean connect) {
         Random random = new Random();
         boolean condition1, condition2, condition3, condition4;
         for (int i = 0; i < iter * iter; i++) {
