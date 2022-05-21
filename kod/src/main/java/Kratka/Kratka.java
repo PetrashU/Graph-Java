@@ -224,9 +224,11 @@ public class Kratka extends Application {
             try {
                 if (savefile != null) {
                     PrintWriter w = new PrintWriter(savefile);
+                    /* wypisywanie wag grafu do testowania
                     for (int i=0; i<graph.weights.length; i++){
                         System.out.println(graph.weights[i]);
                     }
+                    */
                     graph.saveGraph(w);
                     w.close();
                 }
