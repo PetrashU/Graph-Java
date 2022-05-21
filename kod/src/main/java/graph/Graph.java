@@ -94,7 +94,21 @@ public class Graph {
 
     }
     public void saveGraph(PrintWriter w){
-
+        w.println(row + " " + col);
+        boolean flag = true;
+        for (int i=0; i<iter; i++){
+            flag = true;
+            for (int j=0; j<iter; j++){
+                if (weights[i * iter + j] > 0.0){
+                    if (flag){
+                        w.print("\t");
+                        flag = false;
+                    }
+                    w.print("  " + j + " :" + weights[i * iter + j]);
+                }
+            }
+            w.print("\n");
+        }
     }
     public boolean bfs(){
         ArrayList<Integer> queue = new ArrayList<>();		//kolejka pryorytetowa
