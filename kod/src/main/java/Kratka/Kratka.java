@@ -1,6 +1,7 @@
 package Kratka;
 
 import graph.Graph;
+import graph.Path;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,7 +18,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 import javax.swing.*;
-import java.io.File;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
@@ -103,7 +105,8 @@ public class Kratka extends Application {
                         textcol.setStyle("");
                         return;
                     }
-                    graph = new Graph();
+                    if (graph == null)
+                        graph = new Graph();
                     graph.row = row;
                     graph.col = col;
                     String tweightlow = textweightlow.getText();
@@ -130,9 +133,9 @@ public class Kratka extends Application {
                         textweighthigh.setStyle("");
                         return;
                     }
-                    graph.minWeight = minweight;
+                    //graph.minWeight = minweight;
                     edgemin.setText(String.valueOf(minweight));
-                    graph.maxWeight = maxweight;
+                    //graph.maxWeight = maxweight;
                     edgemax.setText(String.valueOf(maxweight));
                     RadioButton rb = (RadioButton) connectivity.getSelectedToggle();
                     String connect = rb.getText();
@@ -147,7 +150,7 @@ public class Kratka extends Application {
                     }
                     // Test: System.out.println(row + " "+ col +" "+ minweight+ " "+ maxweight+ " "+ connection);
                     graph.generateGraph(connection);
-                    //draw_graph();  --trzeba napisać
+                    //drawGraph();  --trzeba napisać
                 } catch (Exception e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
@@ -159,14 +162,84 @@ public class Kratka extends Application {
         
         Button read = new Button("Read");
         read.setOnAction(e ->{
+            if (graph == null)
+                graph = new Graph();
             FileChooser filechooser = new FileChooser();
             filechooser.getExtensionFilters().addAll(new ExtensionFilter("txt file", "*.txt"));
             File readfile = filechooser.showOpenDialog(primarystage);
+            try {
+                if (readfile != null) {
+                    Reader r = new FileReader(readfile);
+                    graph.readGraph(r);
+                    r.close();
+                    if (graph.ErrorMassage != null) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText(graph.ErrorMassage);
+                        alert.showAndWait();
+                        return;
+                    }
+                    if (graph.WarningMassage != null) {
+                        for (int i = 0; i < graph.WarningMassage.size(); i++) {
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setTitle("WARNING");
+                            alert.setHeaderText(graph.WarningMassage.get(i));
+                            alert.showAndWait();
+                        }
+                    }
+                    row = graph.row;
+                    textrow.setText(String.valueOf(row));
+                    col = graph.col;
+                    textcol.setText(String.valueOf(col));
+                    // graph.minWeight = graph.getMinWeight();
+                    minweight = graph.getMinWeight();
+                    edgemin.setText(String.valueOf(minweight));
+                    textweightlow.setText(String.valueOf(minweight));
+                    //graph.maxWeight = graph.getMaxWeight();
+                    maxweight = graph.getMaxWeight();
+                    edgemax.setText(String.valueOf(maxweight));
+                    textweighthigh.setText(String.valueOf(maxweight));
+                    if (graph.bfs())
+                        connected.setSelected(true);
+                    else
+                        notconnected.setSelected(true);
+                    //drawGraph();
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
         });
         root.getChildren().add(read);
         
         Button savegraph = new Button("Save graph");
+        savegraph.setOnAction(e ->{
+            FileChooser filechooser = new FileChooser();
+            filechooser.getExtensionFilters().addAll(new ExtensionFilter("txt file", "*.txt"));
+            File savefile = filechooser.showSaveDialog(primarystage);
+            try {
+                if (savefile != null) {
+                    PrintWriter w = new PrintWriter(savefile);
+                    graph.saveGraph(w);
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         Button savepath = new Button("Save path");
+        savepath.setOnAction(e ->{
+            FileChooser filechooser = new FileChooser();
+            filechooser.getExtensionFilters().addAll(new ExtensionFilter("txt file", "*.txt"));
+            File savefile = filechooser.showSaveDialog(primarystage);
+            try {
+                if (savefile != null) {
+                    PrintWriter w = new PrintWriter(savefile);
+                    /*jeszcze nie ukończone*/
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         Button clean = new Button("Clean");
         Button delete = new Button("Delete");
         delete.setOnAction(new EventHandler<ActionEvent>() {

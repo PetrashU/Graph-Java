@@ -8,10 +8,13 @@ import java.util.Arrays;
 public class Graph {
     public int row;
     public int col;
-
-    public double minWeight;
-    public double maxWeight;
     public double weights[];
+
+   // public double minWeight;
+    //public double maxWeight;
+    public String ErrorMassage;
+    public ArrayList<String> WarningMassage;
+
 
     public Graph(){
     }
@@ -52,7 +55,7 @@ public class Graph {
     public void readGraph(Reader r){
 
     }
-    public void SaveGraph(PrintWriter w){
+    public void saveGraph(PrintWriter w){
 
     }
     public boolean bfs(){
