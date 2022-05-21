@@ -24,6 +24,11 @@ public class Graph {
         int iter = col * row;
         weights = new double[iter*iter];
     }
+    public Graph(int row, int col, double[] weights){
+        this.row = row;
+        this.col = col;
+        this.weights = weights;
+    }
     public double getMaxWeight(){
         if (weights.length == 0)
             return 0;
