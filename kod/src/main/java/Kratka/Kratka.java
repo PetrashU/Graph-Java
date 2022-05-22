@@ -111,7 +111,9 @@ public class Kratka extends Application {
                         textcol.setStyle("");
                         return;
                     }
-                    if (graph == null)
+                        graph = null;
+                        gc.setFill(Color.BLACK);
+                        gc.fillRect(0,0,850,600);
                         graph = new Graph(row, col);
                     String tweightlow = textweightlow.getText();
                     String tweighthigh = textweighthigh.getText();
@@ -323,6 +325,7 @@ public class Kratka extends Application {
         });
         Button clean = new Button("Clean");
         Button delete = new Button("Delete");
+
         delete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
