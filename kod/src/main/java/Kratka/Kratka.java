@@ -10,6 +10,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -150,6 +152,7 @@ public class Kratka extends Application {
                     }
                     // Test: System.out.println(row + " "+ col +" "+ minweight+ " "+ maxweight+ " "+ connection);
                     graph.generateGraph(connection);
+
                     /*wypisywanie wag grafu do testowania
                     for (int i=0; i<graph.weights.length; i++){
                         System.out.println(graph.weights[i]);
@@ -219,6 +222,46 @@ public class Kratka extends Application {
         });
         root.getChildren().add(read);
 
+        EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent me) {
+                MouseButton mb = me.getButton();
+                if (mb == MouseButton.PRIMARY) {
+                    double xl = me.getX();
+                    double yl = me.getY();
+                    //System.out.println("wspolrzedne lewy guzik x, y: " + xl + ", " +yl);
+                    double sum = 1000;
+                    int st = 0;
+                    for (int i=0; i<graph.iter; i++) {
+                        if (sum > Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl)){
+                            sum = Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl);
+                            st = i;
+                        }
+                    }
+                    //jakoś trzeba przekazać zmienną st do dijkstry ale dopiero po wygenerowaniu/narysowaniu
+                    //i to samo z poniższą zmienną node
+                    //graph.dijkstra(st);
+                    //System.out.println("startowy node: " + st);
+                }
+                else if (mb == MouseButton.SECONDARY) {
+                    double xr = me.getX();
+                    double yr = me.getY();
+                    //System.out.println("wspolrzedne prawy guzik x, y: " + xr + ", " +yr);
+                    double sum = 1000;
+                    int node = graph.iter-1;
+                    for (int i=0; i<graph.iter; i++) {
+                        if (sum > Math.abs(graph.nodeCoordinates[i][0] - xr) + Math.abs(graph.nodeCoordinates[i][1] - yr)){
+                            sum = Math.abs(graph.nodeCoordinates[i][0] - xr) + Math.abs(graph.nodeCoordinates[i][1] - yr);
+                            node = i;
+                        }
+                    }
+                    //System.out.println("koncowy node: " + node);
+                }
+
+            }
+        };
+
+
         Button savegraph = new Button("Save graph");
         savegraph.setOnAction(e ->{
             FileChooser filechooser = new FileChooser();
@@ -239,6 +282,7 @@ public class Kratka extends Application {
                 throw new RuntimeException(ex);
             }
         });
+
         Button savepath = new Button("Save path");
         savepath.setOnAction(e ->{
             FileChooser filechooser = new FileChooser();
@@ -247,6 +291,14 @@ public class Kratka extends Application {
             try {
                 if (savefile != null) {
                     PrintWriter w = new PrintWriter(savefile);
+                    if (graph.bfs()){
+                        /*
+                        Path path = graph.dijkstra(st);
+                        path.savePath(w, graph, node);
+                         */
+                    }
+                    w.close();
+
                     /*jeszcze nie ukończone*/
                 }
             } catch (IOException ex) {
@@ -270,7 +322,7 @@ public class Kratka extends Application {
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.BLACK);
         gc.fillRect(0,0,850,600);
-
+        canvas.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
         root.getChildren().add(canvas);
 
 
