@@ -87,11 +87,6 @@ public class Kratka extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
-                    if (graph != null) {
-                        graph = null;
-                        gc.setFill(Color.BLACK);
-                        gc.fillRect(0, 0, 850, 600);
-                    }
                     String trow = textrow.getText();
                     String tcol = textcol.getText();
                     row = Integer.parseInt(trow);
