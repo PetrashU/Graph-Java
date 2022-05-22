@@ -65,20 +65,20 @@ public class Graph {
     }
 
 
-    public void drawGraph(GraphicsContext gc){
+    public void drawGraph(GraphicsContext gc, int width, int height){
         gc.setFill(Color.ANTIQUEWHITE);
         gc.setLineWidth(2);
         int nodeSize = 20;
         int edgeSize = 4*nodeSize;
-        while ((col+1)*edgeSize > 850 || (row+1)*edgeSize > 600){
+        while ((col+1)*edgeSize > width || (row+1)*edgeSize > height){
             if (nodeSize == 1){
                 break;
             }
             nodeSize--;
             edgeSize = 4*nodeSize;
         }
-        int xnode = (850 - (col-1)*edgeSize)/2 - nodeSize/2;
-        int ynode = (600 - (row-1)*edgeSize)/2 - nodeSize/2;
+        int xnode = (width - (col-1)*edgeSize)/2 - nodeSize/2;
+        int ynode = (height - (row-1)*edgeSize)/2 - nodeSize/2;
         //wstawiam rząd po rzędzie czyli numeruję od lewej do prawej i schodzę w dół
         for (int i=0; i<row; i++) {
             for (int j = 0; j < col; j++) {
