@@ -33,11 +33,13 @@ public class Kratka extends Application {
     public double maxweight = 10.0;
     public GraphicsContext gc;
     public Graph graph;
+    public Path path = new Path();
 
     public Label edgemin;
     public Label edgemax;
     public Label nodemin;
     public Label nodemax;
+    public ArrayList<Integer> nodelist;     //lista wierzchołków końcowych
     @Override
     public void start(Stage primarystage) throws Exception {
 
@@ -85,6 +87,11 @@ public class Kratka extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
+                    if (graph != null) {
+                        graph = null;
+                        gc.setFill(Color.BLACK);
+                        gc.fillRect(0, 0, 850, 600);
+                    }
                     String trow = textrow.getText();
                     String tcol = textcol.getText();
                     row = Integer.parseInt(trow);
@@ -160,7 +167,7 @@ public class Kratka extends Application {
                      */
 
 
-                    graph.drawGraph(gc);
+                    graph.drawGraph(gc, 850, 600);
                 } catch (Exception e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
@@ -213,7 +220,7 @@ public class Kratka extends Application {
                         connected.setSelected(true);
                     else
                         notconnected.setSelected(true);
-                    graph.drawGraph(gc);
+                    graph.drawGraph(gc,850,600);
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -227,6 +234,13 @@ public class Kratka extends Application {
             public void handle(MouseEvent me) {
                 MouseButton mb = me.getButton();
                 if (mb == MouseButton.PRIMARY) {
+                    if (!graph.bfs()){
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Graf nie jest spójny! Nie można użyć algorytmu Dijkstry");
+                        alert.showAndWait();
+                        return;
+                    }
                     double xl = me.getX();
                     double yl = me.getY();
                     //System.out.println("wspolrzedne lewy guzik x, y: " + xl + ", " +yl);
@@ -238,6 +252,9 @@ public class Kratka extends Application {
                             st = i;
                         }
                     }
+                    path = graph.dijkstra(st);
+                    //addColorToNodes(gc, path);
+
                     //jakoś trzeba przekazać zmienną st do dijkstry ale dopiero po wygenerowaniu/narysowaniu
                     //i to samo z poniższą zmienną node
                     //graph.dijkstra(st);
@@ -255,6 +272,8 @@ public class Kratka extends Application {
                             node = i;
                         }
                     }
+                    nodelist.add(node);
+                    //drawPath();
                     //System.out.println("koncowy node: " + node);
                 }
 
@@ -283,23 +302,25 @@ public class Kratka extends Application {
             }
         });
 
-        Button savepath = new Button("Save path");
+        Button savepath = new Button("Save paths");
         savepath.setOnAction(e ->{
+            if (nodelist.size() == 0) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Nie ma znalezionych scieżek do zapisania!");
+                alert.showAndWait();
+                return;
+            }
             FileChooser filechooser = new FileChooser();
             filechooser.getExtensionFilters().addAll(new ExtensionFilter("txt file", "*.txt"));
             File savefile = filechooser.showSaveDialog(primarystage);
             try {
                 if (savefile != null) {
                     PrintWriter w = new PrintWriter(savefile);
-                    if (graph.bfs()){
-                        /*
-                        Path path = graph.dijkstra(st);
-                        path.savePath(w, graph, node);
-                         */
+                    for (int i = 0; i < nodelist.size(); i++){
+                        path.savePath(w,graph,nodelist.get(i));
                     }
                     w.close();
-
-                    /*jeszcze nie ukończone*/
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -311,7 +332,8 @@ public class Kratka extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 graph = null;
-                graph.drawGraph(gc);
+                gc.setFill(Color.BLACK);
+                gc.fillRect(0, 0, 850, 600);
             }
         });
         HBox secondline = new HBox(70,generate,read,savegraph,savepath,clean,delete);
