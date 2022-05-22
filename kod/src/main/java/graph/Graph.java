@@ -15,12 +15,13 @@ public class Graph {
     public int col;
 
     public int iter = row*col;
-    public double weights[];
+    public double[] weights;
 
     public double minWeight;
     public double maxWeight;
     public String ErrorMassage;
     public ArrayList<String> WarningMassage;
+    public double[][] nodeCoordinates;
 
 
     public Graph(){
@@ -30,6 +31,7 @@ public class Graph {
         this.col = col;
         iter = col * row;
         weights = new double[iter*iter];
+        nodeCoordinates = new double[iter][2];
     }
     public Graph(int row, int col, double[] weights){
         this.row = row;
@@ -77,7 +79,6 @@ public class Graph {
         }
         int xnode = (850 - (col-1)*edgeSize)/2 - nodeSize/2;
         int ynode = (600 - (row-1)*edgeSize)/2 - nodeSize/2;
-        double[][] nodeCoordinates = new double[iter][2];
         //wstawiam rząd po rzędzie czyli numeruję od lewej do prawej i schodzę w dół
         for (int i=0; i<row; i++) {
             for (int j = 0; j < col; j++) {
@@ -179,6 +180,8 @@ public class Graph {
         int min_i;
         double tmp, min;
         Path path = new Path();
+        path.cost = new double[iter];
+        path.last = new int[iter];
         Arrays.fill(q, 0);
         Arrays.fill(path.cost, Double.POSITIVE_INFINITY);
         Arrays.fill(path.last, -1);
