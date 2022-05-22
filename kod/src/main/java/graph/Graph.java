@@ -1,10 +1,12 @@
 package graph;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 
 import Kratka.ColorScale;
 import javafx.scene.canvas.GraphicsContext;
@@ -57,6 +59,7 @@ public class Graph {
             min = weights[i];
             i++;
         } while (weights[i] == 0);
+        min = weights[i];
         for (i = 0; i < weights.length; i++) {
             if (weights[i] < min && weights[i] != 0)
                 min = weights[i];
@@ -70,6 +73,8 @@ public class Graph {
         gc.setLineWidth(2);
         int nodeSize = 20;
         int edgeSize = 4*nodeSize;
+        //jeżeli graf się nie mieści, to go skaluję aż do skutku (do min. nodeSize == 1)
+        //zachowując zależność że edgeSize jest 4 razy dłuższy niż rozmiar node'a
         while ((col+1)*edgeSize > width || (row+1)*edgeSize > height){
             if (nodeSize == 1){
                 break;
@@ -131,9 +136,38 @@ public class Graph {
             }
         }
     }
-    public void readGraph(Reader r){
+    public void readGraph(BufferedReader r) throws IOException {
+        try {
+            int index;
+            int lineNumber = 0;
+            String line = r.readLine();
+            Scanner scanner = new Scanner(line);
+            row = scanner.nextInt();
+            col = scanner.nextInt();
+            scanner.close();
+            iter = col * row;
+            weights = new double[iter * iter];
+            nodeCoordinates = new double[iter][2];
+            for (int i = 0; i < iter * iter; i++) {
+                weights[i] = 0.0;
+            }
+            while ((line = r.readLine()) != null) {
+                //mam linię w postaci stringu - mogę teraz na niej operować
+                line = line.trim();
+                String[] data = line.split("[\\s:]+");
+                //data to tablica danych w postaci stringów z jednej linii
+                    for (int i=0; i< data.length; i+=2){
+                        index = Integer.parseInt(data[i]);
+                        weights[lineNumber * iter + index] = Double.parseDouble(data[i+1]);
+                    }
+                    lineNumber++;
+                    }
+                }
+        catch(IOException ioe){
+            ioe.getMessage();
+            }
+        }
 
-    }
     public void saveGraph(PrintWriter w){
         w.println(row + " " + col);
         boolean flag = true;
