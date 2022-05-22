@@ -111,10 +111,10 @@ public class Kratka extends Application {
                         textcol.setStyle("");
                         return;
                     }
-                        graph = null;
-                        gc.setFill(Color.BLACK);
-                        gc.fillRect(0,0,850,600);
-                        graph = new Graph(row, col);
+                    graph = null;
+                    gc.setFill(Color.BLACK);
+                    gc.fillRect(0,0,850,600);
+                    graph = new Graph(row, col);
                     String tweightlow = textweightlow.getText();
                     String tweighthigh = textweighthigh.getText();
                     minweight = Double.parseDouble(tweightlow);
@@ -176,14 +176,16 @@ public class Kratka extends Application {
 
         Button read = new Button("Read");
         read.setOnAction(e ->{
-            if (graph == null)
-                graph = new Graph();
             FileChooser filechooser = new FileChooser();
             filechooser.getExtensionFilters().addAll(new ExtensionFilter("txt file", "*.txt"));
             File readfile = filechooser.showOpenDialog(primarystage);
             try {
                 if (readfile != null) {
-                    Reader r = new FileReader(readfile);
+                    BufferedReader r = new BufferedReader(new FileReader(readfile));
+                    graph = null;
+                    graph = new Graph();
+                    gc.setFill(Color.BLACK);
+                    gc.fillRect(0, 0, 850, 600);
                     graph.readGraph(r);
                     r.close();
                     if (graph.ErrorMassage != null) {
@@ -205,11 +207,11 @@ public class Kratka extends Application {
                     textrow.setText(String.valueOf(row));
                     col = graph.col;
                     textcol.setText(String.valueOf(col));
-                    // graph.minWeight = graph.getMinWeight();
+                    graph.minWeight = graph.getMinWeight();
                     minweight = graph.getMinWeight();
                     edgemin.setText(String.valueOf(minweight));
                     textweightlow.setText(String.valueOf(minweight));
-                    //graph.maxWeight = graph.getMaxWeight();
+                    graph.maxWeight = graph.getMaxWeight();
                     maxweight = graph.getMaxWeight();
                     edgemax.setText(String.valueOf(maxweight));
                     textweighthigh.setText(String.valueOf(maxweight));
