@@ -34,11 +34,10 @@ public class Kratka extends Application {
     public GraphicsContext gc;
     public Graph graph;
     public Path path = new Path();
+    public ColorScale edgeScale;
+    public ColorScale nodeScale;
 
-    public Label edgemin;
-    public Label edgemax;
-    public Label nodemin;
-    public Label nodemax;
+
     public ArrayList<Integer> nodelist;     //lista wierzchołków końcowych
     @Override
     public void start(Stage primarystage) throws Exception {
@@ -79,7 +78,10 @@ public class Kratka extends Application {
         FlowPane root = new FlowPane();
         root.setVgap(5);
         root.getChildren().add(firstline);
-
+        Label edgemin = new Label(String.valueOf(minweight));
+        Label edgemax = new Label(String.valueOf(maxweight));
+        Label nodemin = new Label();
+        Label nodemax = new Label();
 
 
         Button generate = new Button("Generate");
@@ -141,8 +143,10 @@ public class Kratka extends Application {
                     }
                     graph.minWeight = minweight;
                     edgemin.setText(String.valueOf(minweight));
+                    edgeScale.min = minweight;
                     graph.maxWeight = maxweight;
                     edgemax.setText(String.valueOf(maxweight));
+                    edgeScale.max = maxweight;
                     RadioButton rb = (RadioButton) connectivity.getSelectedToggle();
                     String connect = rb.getText();
                     boolean connection;
@@ -164,7 +168,7 @@ public class Kratka extends Application {
                      */
 
 
-                    graph.drawGraph(gc, 850, 600);
+                    graph.drawGraph(gc, 850, 600, edgeScale);
                 } catch (Exception e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
@@ -211,15 +215,17 @@ public class Kratka extends Application {
                     minweight = graph.getMinWeight();
                     edgemin.setText(String.valueOf(minweight));
                     textweightlow.setText(String.valueOf(minweight));
+                    edgeScale.min = minweight;
                     graph.maxWeight = graph.getMaxWeight();
                     maxweight = graph.getMaxWeight();
                     edgemax.setText(String.valueOf(maxweight));
                     textweighthigh.setText(String.valueOf(maxweight));
+                    edgeScale.max = maxweight;
                     if (graph.bfs())
                         connected.setSelected(true);
                     else
                         notconnected.setSelected(true);
-                    graph.drawGraph(gc,850,600);
+                    graph.drawGraph(gc,850,600, edgeScale);
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -252,7 +258,15 @@ public class Kratka extends Application {
                         }
                     }
                     path = graph.dijkstra(st);
-                    //addColorToNodes(gc, path);
+                    double nodecostmin = path.getMinCost();
+                    double nodecostmax = path.getMaxCost();
+
+                    nodemin.setText(String.valueOf(nodecostmin));
+                    nodemax.setText(String.valueOf(nodecostmax));
+
+                    nodeScale.min = nodecostmin;
+                    nodeScale.max = nodecostmax;
+                    //addColorToNodes(gc, path, nodeScale);
 
                     //jakoś trzeba przekazać zmienną st do dijkstry ale dopiero po wygenerowaniu/narysowaniu
                     //i to samo z poniższą zmienną node
@@ -348,21 +362,21 @@ public class Kratka extends Application {
         root.getChildren().add(canvas);
 
 
-        edgemin = new Label(String.valueOf(minweight));
-        edgemax = new Label(String.valueOf(maxweight));
+
         Label edgecolor = new Label("Edge color scale");
         HBox colorfirst = new HBox(325, edgemin,edgecolor, edgemax);
         root.getChildren().add(colorfirst);
 
-        ColorScale edgescale = new ColorScale(minweight, maxweight);
-        ImageView scaleimg = new ImageView(edgescale.DrawColorScale(850, 20));
+        edgeScale = new ColorScale(minweight, maxweight);
+        ImageView scaleimg = new ImageView(edgeScale.DrawColorScale(850, 20));
 
         root.getChildren().add(scaleimg);
 
-        double nodecostmin = 0.0;
+       /* double nodecostmin = 0.0;
         double nodecostmax = 10.0;
-        nodemin = new Label(String.valueOf(nodecostmin));
-        nodemax = new Label(String.valueOf(nodecostmax));
+
+        nodemin.setText(String.valueOf(nodecostmin));
+        nodemax.setText(String.valueOf(nodecostmax));*/
         Label nodecolor = new Label("Node color scale");
         HBox colorsecond = new HBox(325, nodemin,nodecolor, nodemax);
         root.getChildren().add(colorsecond);

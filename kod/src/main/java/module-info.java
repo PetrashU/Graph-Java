@@ -1,4 +1,4 @@
-module com.example.graphjava {
+module com.example.graphjava{
     requires javafx.controls;
     requires javafx.fxml;
 
