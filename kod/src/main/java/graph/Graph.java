@@ -24,6 +24,7 @@ public class Graph {
     public String ErrorMassage;
     public ArrayList<String> WarningMassage;
     public double[][] nodeCoordinates;
+    public ArrayList<Integer> nodelist = new ArrayList<>();     //lista wierzchołków końcowych
 
 
     public Graph(){
@@ -155,17 +156,17 @@ public class Graph {
                 line = line.trim();
                 String[] data = line.split("[\\s:]+");
                 //data to tablica danych w postaci stringów z jednej linii
-                    for (int i=0; i< data.length; i+=2){
-                        index = Integer.parseInt(data[i]);
-                        weights[lineNumber * iter + index] = Double.parseDouble(data[i+1]);
-                    }
-                    lineNumber++;
-                    }
+                for (int i=0; i< data.length; i+=2){
+                    index = Integer.parseInt(data[i]);
+                    weights[lineNumber * iter + index] = Double.parseDouble(data[i+1]);
                 }
-        catch(IOException ioe){
-            ioe.getMessage();
+                lineNumber++;
             }
         }
+        catch(IOException ioe){
+            ioe.getMessage();
+        }
+    }
 
     public void saveGraph(PrintWriter w){
         w.println(row + " " + col);
