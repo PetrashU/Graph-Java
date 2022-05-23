@@ -38,7 +38,6 @@ public class Kratka extends Application {
     public ColorScale nodeScale;
 
 
-    public ArrayList<Integer> nodelist;     //lista wierzchołków końcowych
     @Override
     public void start(Stage primarystage) throws Exception {
 
@@ -238,6 +237,8 @@ public class Kratka extends Application {
             @Override
             public void handle(MouseEvent me) {
                 MouseButton mb = me.getButton();
+                int startNode = 0;
+                int finishNode = graph.iter-1;
                 if (mb == MouseButton.PRIMARY) {
                     if (!graph.bfs()){
                         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -250,14 +251,14 @@ public class Kratka extends Application {
                     double yl = me.getY();
                     //System.out.println("wspolrzedne lewy guzik x, y: " + xl + ", " +yl);
                     double sum = 1000;
-                    int st = 0;
                     for (int i=0; i<graph.iter; i++) {
                         if (sum > Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl)){
                             sum = Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl);
-                            st = i;
+                            startNode = i;
                         }
                     }
-                    path = graph.dijkstra(st);
+                    path = graph.dijkstra(startNode);
+                    /*
                     double nodecostmin = path.getMinCost();
                     double nodecostmax = path.getMaxCost();
 
@@ -266,6 +267,8 @@ public class Kratka extends Application {
 
                     nodeScale.min = nodecostmin;
                     nodeScale.max = nodecostmax;
+
+                     */
                     //addColorToNodes(gc, path, nodeScale);
 
                     //jakoś trzeba przekazać zmienną st do dijkstry ale dopiero po wygenerowaniu/narysowaniu
@@ -278,14 +281,22 @@ public class Kratka extends Application {
                     double yr = me.getY();
                     //System.out.println("wspolrzedne prawy guzik x, y: " + xr + ", " +yr);
                     double sum = 1000;
-                    int node = graph.iter-1;
                     for (int i=0; i<graph.iter; i++) {
                         if (sum > Math.abs(graph.nodeCoordinates[i][0] - xr) + Math.abs(graph.nodeCoordinates[i][1] - yr)){
                             sum = Math.abs(graph.nodeCoordinates[i][0] - xr) + Math.abs(graph.nodeCoordinates[i][1] - yr);
-                            node = i;
+                            finishNode = i;
                         }
                     }
-                    nodelist.add(node);
+                    graph.nodelist.add(finishNode);
+                    gc.setStroke(Color.WHITE);
+                    gc.setLineWidth(4);
+                    int sEdge = finishNode;
+                    int fEdge = path.last[sEdge];
+                    while (fEdge != -1){
+                        gc.strokeLine(graph.nodeCoordinates[sEdge][0] + 10, graph.nodeCoordinates[sEdge][1] + 10, graph.nodeCoordinates[fEdge][0] + 10, graph.nodeCoordinates[fEdge][1] + 10);
+                        sEdge = fEdge;
+                        fEdge = path.last[fEdge];
+                    }
                     //drawPath();
                     //System.out.println("koncowy node: " + node);
                 }
@@ -317,7 +328,7 @@ public class Kratka extends Application {
 
         Button savepath = new Button("Save paths");
         savepath.setOnAction(e ->{
-            if (nodelist.size() == 0) {
+            if (graph.nodelist.size() == 0) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText("Nie ma znalezionych scieżek do zapisania!");
@@ -330,8 +341,8 @@ public class Kratka extends Application {
             try {
                 if (savefile != null) {
                     PrintWriter w = new PrintWriter(savefile);
-                    for (int i = 0; i < nodelist.size(); i++){
-                        path.savePath(w,graph,nodelist.get(i));
+                    for (int i = 0; i < graph.nodelist.size(); i++){
+                        path.savePath(w,graph,graph.nodelist.get(i));
                     }
                     w.close();
                 }
