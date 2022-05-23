@@ -5,6 +5,7 @@ import graph.Path;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -393,6 +394,36 @@ public class Kratka extends Application {
         root.getChildren().add(colorsecond);
 
         Button changescale = new Button("Modify color scale");
+        changescale.setOnAction(e -> {
+            ColorPicker colorPicker1 = new ColorPicker(); //color max weight edge
+            ColorPicker colorPicker2 = new ColorPicker(); //color min weight edge
+            ColorPicker colorPicker3 = new ColorPicker(); //color node
+            ColorPicker colorPicker4 = new ColorPicker(); //color path
+            Label cpLabel1 = new Label("Max weight edge color");
+            Label cpLabel2 = new Label("Min weight edge color");
+            Label cpLabel3 = new Label("Node color");
+            Label cpLabel4 = new Label("Path color");
+            Label cpTitle = new Label("Choose colors: ");
+            Label[] cpLabels;
+            cpLabels = new Label[]{cpLabel1, cpLabel2, cpLabel3, cpLabel4};
+            FlowPane chooseColors = new FlowPane();
+            chooseColors.setPadding(new Insets(10, 20, 10, 30));
+            chooseColors.setVgap(4);
+            ColorPicker[] colorPickers;
+            colorPickers = new ColorPicker[]{colorPicker1, colorPicker2, colorPicker3, colorPicker4};
+            chooseColors.getChildren().add(cpTitle);
+            for (int i=0; i<colorPickers.length; i++) {
+                chooseColors.getChildren().add(cpLabels[i]);
+                chooseColors.getChildren().add(colorPickers[i]);
+            }
+            Stage stageColorScale = new Stage();
+            stageColorScale.setWidth(200);
+            stageColorScale.setHeight(300);
+            Scene sceneColorScale = new Scene(chooseColors);
+            stageColorScale.setScene(sceneColorScale);
+            stageColorScale.setResizable(false);
+            stageColorScale.show();
+        });
         root.getChildren().add(changescale);
 
         Scene scene = new Scene(root,850,800);
