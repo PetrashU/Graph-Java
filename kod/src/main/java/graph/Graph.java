@@ -68,7 +68,7 @@ public class Graph {
     }
 
 
-    public void drawGraph(GraphicsContext gc, int width, int height){
+    public void drawGraph(GraphicsContext gc, int width, int height, ColorScale scale){
         gc.setFill(Color.ANTIQUEWHITE);
         gc.setLineWidth(2);
         int nodeSize = 20;
@@ -92,10 +92,9 @@ public class Graph {
                 gc.fillOval(nodeCoordinates[i*col + j][0], nodeCoordinates[i*col + j][1], nodeSize, nodeSize);
             }
         }
-        ColorScale colorscale = new ColorScale(minWeight, maxWeight);
         for (int i=0; i<iter; i++){
             for (int j=i; j<iter; j++){
-                gc.setStroke(colorscale.ColorOfValue(weights[i*iter + j]));
+                gc.setStroke(scale.ColorOfValue(weights[i*iter + j]));
                 if (weights[i*iter + j] > 0 ) {
                     gc.strokeLine(nodeCoordinates[i][0]+nodeSize/2, nodeCoordinates[i][1]+nodeSize/2, nodeCoordinates[j][0]+nodeSize/2, nodeCoordinates[j][1]+nodeSize/2);
                 }
