@@ -327,12 +327,12 @@ Poniższy test ma na celu sprawdzenie, czy metoda \texttt{boolean bfs()} zwróci
 @Test
 public void ConnectedGraphTrue1(){
     
-    Graph graph = new Graph(2, 3, {0.00, 1.00, 0.00, 4.00, 0.00,
+    Graph graph = new Graph(2, 3, new double[]{0.00, 1.00, 0.00, 4.00, 0.00,
     0.00, 1.00, 0.00, 3.00, 0.00, 0.00, 0.00, 0.00, 3.00, 0.00,
     0.00, 0.00, 7.00, 4.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,
-    0.00, 0.00, 0.00, 0.00, 2.00, 0.00, 0.00, 7.00, 0.00, 2.00, 0.00}
+    0.00, 0.00, 0.00, 0.00, 2.00, 0.00, 0.00, 7.00, 0.00, 2.00, 0.00});
         
-    Assert.assertTrue(graph.bfs());
+    assertTrue(graph.bfs());
     }
 \end{verbatim}
 
@@ -342,12 +342,12 @@ Poniższy test ma na celu sprawdzenie, czy metoda \texttt{double getMaxWeight()}
 @Test
 public void MaxWeight7(){
     
-    Graph graph = new Graph(2, 3, {0.00, 1.00, 0.00, 4.00, 0.00,
+    Graph graph = new Graph(2, 3, new double[]{0.00, 1.00, 0.00, 4.00, 0.00,
     0.00, 1.00, 0.00, 3.00, 0.00, 0.00, 0.00, 0.00, 3.00, 0.00,
     0.00, 0.00, 7.00, 4.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,
-    0.00, 0.00, 0.00, 0.00, 2.00, 0.00, 0.00, 7.00, 0.00, 2.00, 0.00}
+    0.00, 0.00, 0.00, 0.00, 2.00, 0.00, 0.00, 7.00, 0.00, 2.00, 0.00});
         
-    Assert.assertEquals(7, graph.getMaxWeight());
+    assertEquals(7, graph.getMaxWeight());
     }
 \end{verbatim}
 
@@ -355,9 +355,7 @@ Poniższy test ma na celu sprawdzenie poprawności generowania spójnego grafu p
 \begin{verbatim}
     @Test
     void CheckGenerationOfConnectedGraph() {
-        graph = new Graph(3, 2);
-	graph.minWeight = 0.1;
-	graph.maxWeight = 10;
+        Graph graph = new Graph(3, 2);
         graph.generateGraph(true);
         assertTrue(graph.bfs());
     }
@@ -367,9 +365,7 @@ Poniższy test ma na celu sprawdzenie poprawności metod zapisywania i odczytywa
 \begin{verbatim}
     @Test
     void CheckReadingAndSaving(){
-        graph = new Graph(3,2);
-	graph.minWeight = 0.1;
-	graph.maxWeight = 10;
+        Graph graph = new Graph(3,2);
         graph.generateGraph(true);
         File write;
         write = new File("filename.txt");
@@ -391,6 +387,23 @@ Poniższy test ma na celu sprawdzenie poprawności metod zapisywania i odczytywa
         assertEquals(graph.col, graph1.col);
         assertArrayEquals(graph.weights, graph1.weights);
     }
+\end{verbatim}
+
+Następny test służy do sprawdzanie poprawnego działania algorytmu Dijkstry.
+\begin{verbatim}
+        @Test
+    void checkDijkstra() {
+        Graph graph = new Graph(2, 3, new double[]{0.00, 1.00, 0.00, 4.00, 0.00, 0.00,
+                1.00, 0.00, 3.00, 0.00, 0.00, 0.00,
+                0.00, 3.00, 0.00, 0.00, 0.00, 7.00,
+                4.00, 0.00, 0.00, 0.00, 0.00, 0.00,
+                0.00, 0.00, 0.00, 0.00, 0.00, 2.00,
+                0.00, 0.00, 7.00, 0.00, 2.00, 0.00});
+        Path path = graph.dijkstra(0);
+        assertArrayEquals(path.cost, new double[]{0.0, 1.0, 4.0, 4.0, 13.0, 11.0});
+        assertArrayEquals(path.last, new int [] {-1,0,1,0,5,2});
+    }
+}
 \end{verbatim}
 Reszta testowania odbywa się w środowisku graficznym, poprzez korzystanie z opcji interfejsu i sprawdzanie, czy wyniki działania są zgodne z oczekiwanymi.
 \end{document}
