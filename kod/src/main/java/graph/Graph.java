@@ -15,8 +15,6 @@ import javafx.scene.paint.Color;
 public class Graph {
     public int row;
     public int col;
-
-    public int iter = row*col;
     public double[] weights;
 
     public double minWeight;
@@ -24,7 +22,7 @@ public class Graph {
     public String ErrorMassage;
     public ArrayList<String> WarningMassage;
     public double[][] nodeCoordinates;
-    public ArrayList<Integer> nodelist = new ArrayList<>();     //lista wierzchołków końcowych
+
 
 
     public Graph(){
@@ -32,7 +30,7 @@ public class Graph {
     public Graph(int row, int col){
         this.row = row;
         this.col = col;
-        iter = col * row;
+        int iter = row * col;
         weights = new double[iter*iter];
         nodeCoordinates = new double[iter][2];
     }
@@ -74,6 +72,7 @@ public class Graph {
         gc.setLineWidth(2);
         int nodeSize = 20;
         int edgeSize = 4*nodeSize;
+        int iter = row * col;
         //jeżeli graf się nie mieści, to go skaluję aż do skutku (do min. nodeSize == 1)
         //zachowując zależność że edgeSize jest 4 razy dłuższy niż rozmiar node'a
         while ((col+1)*edgeSize > width || (row+1)*edgeSize > height){
@@ -105,6 +104,7 @@ public class Graph {
     }
     public void generateGraph(boolean connect) {
         Random random = new Random();
+        int iter = row * col;
         boolean condition1, condition2, condition3, condition4;
         for (int i = 0; i < iter * iter; i++) {
             weights[i] = 0.0;
@@ -136,7 +136,7 @@ public class Graph {
             }
         }
     }
-    public void readGraph(BufferedReader r) throws IOException {
+    public void readGraph(BufferedReader r) throws IOException {    //trzeba dodać obsługę błędów
         try {
             int index;
             int lineNumber = 0;
@@ -145,7 +145,7 @@ public class Graph {
             row = scanner.nextInt();
             col = scanner.nextInt();
             scanner.close();
-            iter = col * row;
+            int iter = col * row;
             weights = new double[iter * iter];
             nodeCoordinates = new double[iter][2];
             for (int i = 0; i < iter * iter; i++) {
@@ -170,6 +170,7 @@ public class Graph {
 
     public void saveGraph(PrintWriter w){
         w.println(row + " " + col);
+        int iter = row * col;
         boolean flag = true;
         for (int i=0; i<iter; i++){
             flag = true;
@@ -213,6 +214,7 @@ public class Graph {
         int[] q = new int[row*col];		//tabela, pokazująca, czy odpowiedni węzeł był odwiedzony
         int min_i;
         double tmp, min;
+        int iter = row * col;
         Path path = new Path();
         path.cost = new double[iter];
         path.last = new int[iter];

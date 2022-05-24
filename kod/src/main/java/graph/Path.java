@@ -4,8 +4,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class Path {
-    double cost[];
-    int last[];
+    public double cost[];
+    public int last[];
 
     public Path(){
     }

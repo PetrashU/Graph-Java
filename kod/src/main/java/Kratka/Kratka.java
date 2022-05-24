@@ -37,6 +37,7 @@ public class Kratka extends Application {
     public Path path = new Path();
     public ColorScale edgeScale;
     public ColorScale nodeScale;
+    public ArrayList<Integer> nodelist = new ArrayList<>();     //lista wierzchołków końcowych
 
 
     @Override
@@ -239,7 +240,7 @@ public class Kratka extends Application {
             public void handle(MouseEvent me) {
                 MouseButton mb = me.getButton();
                 int startNode = 0;
-                int finishNode = graph.iter-1;
+                int finishNode = graph.row * graph.col -1;
                 if (mb == MouseButton.PRIMARY) {
                     if (!graph.bfs()){
                         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -252,13 +253,24 @@ public class Kratka extends Application {
                     double yl = me.getY();
                     //System.out.println("wspolrzedne lewy guzik x, y: " + xl + ", " +yl);
                     double sum = 1000;
-                    for (int i=0; i<graph.iter; i++) {
+                    for (int i=0; i<(graph.col * graph.row); i++) {
                         if (sum > Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl)){
                             sum = Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl);
                             startNode = i;
                         }
                     }
                     path = graph.dijkstra(startNode);
+
+                    double nodecostmin = path.getMinCost();
+                    double nodecostmax = path.getMaxCost();
+
+                    nodemin.setText(String.valueOf(nodecostmin));
+                    nodemax.setText(String.valueOf(nodecostmax));
+
+                    nodeScale = new ColorScale(nodecostmin,nodecostmax);
+
+                    addColorNodes(gc, graph, 850, 600, nodeScale, path);
+
                     /*
                     double nodecostmin = path.getMinCost();
                     double nodecostmax = path.getMaxCost();
@@ -282,13 +294,13 @@ public class Kratka extends Application {
                     double yr = me.getY();
                     //System.out.println("wspolrzedne prawy guzik x, y: " + xr + ", " +yr);
                     double sum = 1000;
-                    for (int i=0; i<graph.iter; i++) {
+                    for (int i=0; i<(graph.col * graph.row); i++) {
                         if (sum > Math.abs(graph.nodeCoordinates[i][0] - xr) + Math.abs(graph.nodeCoordinates[i][1] - yr)){
                             sum = Math.abs(graph.nodeCoordinates[i][0] - xr) + Math.abs(graph.nodeCoordinates[i][1] - yr);
                             finishNode = i;
                         }
                     }
-                    graph.nodelist.add(finishNode);
+                    nodelist.add(finishNode);
                     gc.setStroke(Color.WHITE);
                     gc.setLineWidth(4);
                     int sEdge = finishNode;
@@ -304,6 +316,8 @@ public class Kratka extends Application {
 
             }
         };
+
+
 
 
         Button savegraph = new Button("Save graph");
@@ -329,7 +343,7 @@ public class Kratka extends Application {
 
         Button savepath = new Button("Save paths");
         savepath.setOnAction(e ->{
-            if (graph.nodelist.size() == 0) {
+            if (nodelist.size() == 0) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText("Nie ma znalezionych scieżek do zapisania!");
@@ -342,8 +356,8 @@ public class Kratka extends Application {
             try {
                 if (savefile != null) {
                     PrintWriter w = new PrintWriter(savefile);
-                    for (int i = 0; i < graph.nodelist.size(); i++){
-                        path.savePath(w,graph,graph.nodelist.get(i));
+                    for (int i = 0; i < nodelist.size(); i++){
+                        path.savePath(w,graph,nodelist.get(i));
                     }
                     w.close();
                 }
@@ -431,6 +445,31 @@ public class Kratka extends Application {
         primarystage.setScene(scene);
         primarystage.setTitle("Kratka");
         primarystage.show();
+    }
+    public void addColorNodes(GraphicsContext gc, Graph graph, int width, int height, ColorScale scale, Path path){
+        int iter = graph.row * graph.col;
+        double[][] nodeCoordinates = new double[iter][2];
+        gc.setLineWidth(2);
+        int nodeSize = 20;
+        int edgeSize = 4*nodeSize;
+        while ((graph.col+1)*edgeSize > width || (graph.row+1)*edgeSize > height){
+            if (nodeSize == 1){
+                break;
+            }
+            nodeSize--;
+            edgeSize = 4*nodeSize;
+        }
+        int xnode = (width - (graph.col-1)*edgeSize)/2 - nodeSize/2;
+        int ynode = (height - (graph.row-1)*edgeSize)/2 - nodeSize/2;
+        //wstawiam rząd po rzędzie czyli numeruję od lewej do prawej i schodzę w dół
+        for (int i=0; i<graph.row; i++) {
+            for (int j = 0; j < graph.col; j++) {
+                nodeCoordinates[i*graph.col + j][0] = xnode + j * edgeSize;
+                nodeCoordinates[i*graph.col + j][1] = ynode + i * edgeSize;
+                gc.setFill(scale.ColorOfValue(path.cost[i* graph.col + j]));
+                gc.fillOval(nodeCoordinates[i*graph.col + j][0], nodeCoordinates[i*graph.col + j][1], nodeSize, nodeSize);
+            }
+        }
     }
 
     public static void main(String[] args) {
