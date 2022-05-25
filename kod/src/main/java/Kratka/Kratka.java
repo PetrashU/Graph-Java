@@ -1,5 +1,6 @@
 package Kratka;
 
+import graph.Edge;
 import graph.Graph;
 import graph.Path;
 import javafx.application.Application;
@@ -20,7 +21,6 @@ import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -34,7 +34,7 @@ public class Kratka extends Application {
     public double maxweight = 10.0;
     public GraphicsContext gc;
     public Graph graph;
-    public Path path = new Path();
+    public Path path;
     public ColorScale edgeScale;
     public ColorScale nodeScale;
     public ArrayList<Integer> nodelist = new ArrayList<>();     //lista wierzchołków końcowych
@@ -86,96 +86,100 @@ public class Kratka extends Application {
 
 
         Button generate = new Button("Generate");
-        generate.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                try {
-                    String trow = textrow.getText();
-                    String tcol = textcol.getText();
-                    row = Integer.parseInt(trow);
-                    if (row <= 0 ){
-                        textrow.setStyle("-fx-text-box-border: red;");
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Error");
-                        alert.setHeaderText("Liczba wierszy nie może być równa lub mniejsza 0");
-                        alert.setContentText("Proszę zmienić podaną liczbę wierszy");
-                        alert.showAndWait();
-                        textrow.setStyle("");
-                        return;
-                    }
-                    col = Integer.parseInt(tcol);
-                    if (col <= 0 ){
-                        textcol.setStyle("-fx-text-box-border: red;");
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Error");
-                        alert.setHeaderText("Liczba kolumn nie może być równa lub mniejsza 0");
-                        alert.setContentText("Proszę zmienić podaną liczbę kolumn");
-                        alert.showAndWait();
-                        textcol.setStyle("");
-                        return;
-                    }
-                    graph = null;
-                    gc.setFill(Color.BLACK);
-                    gc.fillRect(0,0,850,600);
-                    graph = new Graph(row, col);
-                    String tweightlow = textweightlow.getText();
-                    String tweighthigh = textweighthigh.getText();
-                    minweight = Double.parseDouble(tweightlow);
-                    if (minweight < 0 ){
-                        textweightlow.setStyle("-fx-text-box-border: red;");
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Error");
-                        alert.setHeaderText("Dolna granica zakresu losowanych wag nie może być mniejsza od 0");
-                        alert.setContentText("Proszę zmienić dolną granicę zakresu wag");
-                        alert.showAndWait();
-                        textweightlow.setStyle("");
-                        return;
-                    }
-                    maxweight = Double.parseDouble(tweighthigh);
-                    if (maxweight <= 0 ){
-                        textweighthigh.setStyle("-fx-text-box-border: red;");
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setTitle("Error");
-                        alert.setHeaderText("Górna granica zakresu losowanych wag nie może być mniejsza lub równa 0");
-                        alert.setContentText("Proszę zmienić górną granicę zakresu wag");
-                        alert.showAndWait();
-                        textweighthigh.setStyle("");
-                        return;
-                    }
-                    graph.minWeight = minweight;
-                    edgemin.setText(String.valueOf(minweight));
-                    edgeScale.min = minweight;
-                    graph.maxWeight = maxweight;
-                    edgemax.setText(String.valueOf(maxweight));
-                    edgeScale.max = maxweight;
-                    RadioButton rb = (RadioButton) connectivity.getSelectedToggle();
-                    String connect = rb.getText();
-                    boolean connection;
-                    if (Objects.equals(connect, "Connected"))
-                        connection = true;
-                    else if (Objects.equals(connect, "Not connected"))
-                        connection = false;
-                    else {
-                        Random random = new Random();
-                        connection = random.nextBoolean();
-                    }
-                    // Test: System.out.println(row + " "+ col +" "+ minweight+ " "+ maxweight+ " "+ connection);
-                    graph.generateGraph(connection);
-
-                    /*wypisywanie wag grafu do testowania
-                    for (int i=0; i<graph.weights.length; i++){
-                        System.out.println(graph.weights[i]);
-                    }
-                     */
-
-
-                    graph.drawGraph(gc, 850, 600, edgeScale);
-                } catch (Exception e) {
+        generate.setOnAction(actionEvent -> {
+            try {
+                String trow = textrow.getText();
+                String tcol = textcol.getText();
+                row = Integer.parseInt(trow);
+                if (row <= 0 ){
+                    textrow.setStyle("-fx-text-box-border: red;");
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
-                    alert.setHeaderText(e.getMessage());
+                    alert.setHeaderText("Liczba wierszy nie może być równa lub mniejsza 0");
+                    alert.setContentText("Proszę zmienić podaną liczbę wierszy");
                     alert.showAndWait();
+                    textrow.setStyle("");
+                    return;
                 }
+                col = Integer.parseInt(tcol);
+                if (col <= 0 ){
+                    textcol.setStyle("-fx-text-box-border: red;");
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Liczba kolumn nie może być równa lub mniejsza 0");
+                    alert.setContentText("Proszę zmienić podaną liczbę kolumn");
+                    alert.showAndWait();
+                    textcol.setStyle("");
+                    return;
+                }
+
+                String tweightlow = textweightlow.getText();
+                String tweighthigh = textweighthigh.getText();
+                minweight = Double.parseDouble(tweightlow);
+                if (minweight < 0 ){
+                    textweightlow.setStyle("-fx-text-box-border: red;");
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Dolna granica zakresu losowanych wag nie może być mniejsza od 0");
+                    alert.setContentText("Proszę zmienić dolną granicę zakresu wag");
+                    alert.showAndWait();
+                    textweightlow.setStyle("");
+                    return;
+                }
+                maxweight = Double.parseDouble(tweighthigh);
+                if (maxweight <= 0 ){
+                    textweighthigh.setStyle("-fx-text-box-border: red;");
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Górna granica zakresu losowanych wag nie może być mniejsza lub równa 0");
+                    alert.setContentText("Proszę zmienić górną granicę zakresu wag");
+                    alert.showAndWait();
+                    textweighthigh.setStyle("");
+                    return;
+                }
+                graph = null;
+                path = null;
+                nodelist.clear();
+                gc.setFill(Color.BLACK);
+                gc.fillRect(0,0,850,600);
+                graph = new Graph(row, col);
+
+                nodemax.setText("");
+                nodemin.setText("");
+
+                graph.minWeight = minweight;
+                edgemin.setText(String.valueOf(minweight));
+                edgeScale.min = minweight;
+                graph.maxWeight = maxweight;
+                edgemax.setText(String.valueOf(maxweight));
+                edgeScale.max = maxweight;
+                RadioButton rb = (RadioButton) connectivity.getSelectedToggle();
+                String connect = rb.getText();
+                boolean connection;
+                if (Objects.equals(connect, "Connected"))
+                    connection = true;
+                else if (Objects.equals(connect, "Not connected"))
+                    connection = false;
+                else {
+                    Random random = new Random();
+                    connection = random.nextBoolean();
+                }
+                // Test: System.out.println(row + " "+ col +" "+ minweight+ " "+ maxweight+ " "+ connection);
+                graph.generateGraph(connection);
+
+                /*wypisywanie wag grafu do testowania
+                for (int i=0; i<graph.weights.length; i++){
+                    System.out.println(graph.weights[i]);
+                }
+                 */
+
+
+                graph.drawGraph(gc, 850, 600, edgeScale);
+            } catch (Exception e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(e.getMessage());
+                alert.showAndWait();
             }
         });
 
@@ -189,8 +193,10 @@ public class Kratka extends Application {
                     BufferedReader r = new BufferedReader(new FileReader(readfile));
                     graph = null;
                     graph = new Graph();
+                    path = null;
                     gc.setFill(Color.BLACK);
                     gc.fillRect(0, 0, 850, 600);
+                    nodelist.clear();
                     graph.readGraph(r);
                     r.close();
                     if (graph.ErrorMassage != null) {
@@ -222,6 +228,10 @@ public class Kratka extends Application {
                     edgemax.setText(String.valueOf(maxweight));
                     textweighthigh.setText(String.valueOf(maxweight));
                     edgeScale.max = maxweight;
+
+                    nodemax.setText("");
+                    nodemin.setText("");
+
                     if (graph.bfs())
                         connected.setSelected(true);
                     else
@@ -240,9 +250,10 @@ public class Kratka extends Application {
             public void handle(MouseEvent me) {
                 MouseButton mb = me.getButton();
                 int startNode = 0;
-                int finishNode = graph.row * graph.col -1;
+                int finishNode = graph.row * graph.col - 1;
                 if (mb == MouseButton.PRIMARY) {
-                    if (!graph.bfs()){
+                    clearPaths();
+                    if (!graph.bfs()) {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Error");
                         alert.setHeaderText("Graf nie jest spójny! Nie można użyć algorytmu Dijkstry");
@@ -253,12 +264,13 @@ public class Kratka extends Application {
                     double yl = me.getY();
                     //System.out.println("wspolrzedne lewy guzik x, y: " + xl + ", " +yl);
                     double sum = 1000;
-                    for (int i=0; i<(graph.col * graph.row); i++) {
-                        if (sum > Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl)){
+                    for (int i = 0; i < (graph.col * graph.row); i++) {
+                        if (sum > Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl)) {
                             sum = Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl);
                             startNode = i;
                         }
                     }
+                    path = new Path();
                     path = graph.dijkstra(startNode);
 
                     double nodecostmin = path.getMinCost();
@@ -267,29 +279,20 @@ public class Kratka extends Application {
                     nodemin.setText(String.valueOf(nodecostmin));
                     nodemax.setText(String.valueOf(nodecostmax));
 
-                    nodeScale = new ColorScale(nodecostmin,nodecostmax);
+                    nodeScale = new ColorScale(nodecostmin, nodecostmax);
 
-                    addColorNodes(gc, graph, 850, 600, nodeScale, path);
+                    addColorNodes(850, 600, nodeScale);
 
-                    /*
-                    double nodecostmin = path.getMinCost();
-                    double nodecostmax = path.getMaxCost();
-
-                    nodemin.setText(String.valueOf(nodecostmin));
-                    nodemax.setText(String.valueOf(nodecostmax));
-
-                    nodeScale.min = nodecostmin;
-                    nodeScale.max = nodecostmax;
-
-                     */
-                    //addColorToNodes(gc, path, nodeScale);
-
-                    //jakoś trzeba przekazać zmienną st do dijkstry ale dopiero po wygenerowaniu/narysowaniu
-                    //i to samo z poniższą zmienną node
-                    //graph.dijkstra(st);
                     //System.out.println("startowy node: " + st);
                 }
                 else if (mb == MouseButton.SECONDARY) {
+                    if (path == null){
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText("Nie został uruchomiomy algorytm Dijkstry! Proszę spoczątku kliknąć na początkowy wierzchołek PRAWYM klawiszem!");
+                        alert.showAndWait();
+                        return;
+                    }
                     double xr = me.getX();
                     double yr = me.getY();
                     //System.out.println("wspolrzedne prawy guzik x, y: " + xr + ", " +yr);
@@ -301,23 +304,13 @@ public class Kratka extends Application {
                         }
                     }
                     nodelist.add(finishNode);
-                    gc.setStroke(Color.WHITE);
-                    gc.setLineWidth(4);
-                    int sEdge = finishNode;
-                    int fEdge = path.last[sEdge];
-                    while (fEdge != -1){
-                        gc.strokeLine(graph.nodeCoordinates[sEdge][0] + 10, graph.nodeCoordinates[sEdge][1] + 10, graph.nodeCoordinates[fEdge][0] + 10, graph.nodeCoordinates[fEdge][1] + 10);
-                        sEdge = fEdge;
-                        fEdge = path.last[fEdge];
-                    }
-                    //drawPath();
+                    drawPath(finishNode);
+
                     //System.out.println("koncowy node: " + node);
                 }
 
             }
         };
-
-
 
 
         Button savegraph = new Button("Save graph");
@@ -328,11 +321,11 @@ public class Kratka extends Application {
             try {
                 if (savefile != null) {
                     PrintWriter w = new PrintWriter(savefile);
-                    /*
-                    for (int i=0; i<graph.weights.length; i++){
-                        System.out.println(graph.weights[i]);
-                    }
-                     */
+
+                    // for (int i=0; i<graph.weights.length; i++){
+                    //      System.out.println(graph.weights[i]);
+                    //  }
+
                     graph.saveGraph(w);
                     w.close();
                 }
@@ -341,7 +334,9 @@ public class Kratka extends Application {
             }
         });
 
+
         Button savepath = new Button("Save paths");
+
         savepath.setOnAction(e ->{
             if (nodelist.size() == 0) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -356,8 +351,8 @@ public class Kratka extends Application {
             try {
                 if (savefile != null) {
                     PrintWriter w = new PrintWriter(savefile);
-                    for (int i = 0; i < nodelist.size(); i++){
-                        path.savePath(w,graph,nodelist.get(i));
+                    for (Integer integer : nodelist) {
+                        path.savePath(w, graph, integer);
                     }
                     w.close();
                 }
@@ -366,31 +361,43 @@ public class Kratka extends Application {
             }
         });
         Button clean = new Button("Clean");
+        clean.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                clearPaths();
+            }
+        });
         Button delete = new Button("Delete");
 
         delete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 graph = null;
+                path = null;
+                nodelist.clear();
                 gc.setFill(Color.BLACK);
                 gc.fillRect(0, 0, 850, 600);
+                edgemax.setText("");
+                edgemin.setText("");
+                nodemin.setText("");
+                nodemax.setText("");
+
             }
         });
-        HBox secondline = new HBox(70,generate,read,savegraph,savepath,clean,delete);
 
+        HBox secondline = new HBox(70, generate, read, savegraph, savepath, clean, delete);
         root.getChildren().add(secondline);
 
-        Canvas canvas = new Canvas(850,600);
+        Canvas canvas = new Canvas(850, 600);
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.BLACK);
-        gc.fillRect(0,0,850,600);
+        gc.fillRect(0, 0, 850, 600);
         canvas.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
         root.getChildren().add(canvas);
 
 
-
         Label edgecolor = new Label("Edge color scale");
-        HBox colorfirst = new HBox(325, edgemin,edgecolor, edgemax);
+        HBox colorfirst = new HBox(325, edgemin, edgecolor, edgemax);
         root.getChildren().add(colorfirst);
 
         edgeScale = new ColorScale(minweight, maxweight);
@@ -398,13 +405,13 @@ public class Kratka extends Application {
 
         root.getChildren().add(scaleimg);
 
-       /* double nodecostmin = 0.0;
+       /*double nodecostmin = 0.0;
         double nodecostmax = 10.0;
 
         nodemin.setText(String.valueOf(nodecostmin));
         nodemax.setText(String.valueOf(nodecostmax));*/
         Label nodecolor = new Label("Node color scale");
-        HBox colorsecond = new HBox(325, nodemin,nodecolor, nodemax);
+        HBox colorsecond = new HBox(325, nodemin, nodecolor, nodemax);
         root.getChildren().add(colorsecond);
 
         Button changescale = new Button("Modify color scale");
@@ -438,38 +445,70 @@ public class Kratka extends Application {
             stageColorScale.setResizable(false);
             stageColorScale.show();
         });
+
         root.getChildren().add(changescale);
 
-        Scene scene = new Scene(root,850,800);
+        Scene scene = new Scene(root, 850, 800);
 
         primarystage.setScene(scene);
         primarystage.setTitle("Kratka");
         primarystage.show();
     }
-    public void addColorNodes(GraphicsContext gc, Graph graph, int width, int height, ColorScale scale, Path path){
+
+    public void addColorNodes(int width, int height, ColorScale scale) {
         int iter = graph.row * graph.col;
         double[][] nodeCoordinates = new double[iter][2];
         gc.setLineWidth(2);
         int nodeSize = 20;
-        int edgeSize = 4*nodeSize;
-        while ((graph.col+1)*edgeSize > width || (graph.row+1)*edgeSize > height){
-            if (nodeSize == 1){
+        int edgeSize = 4 * nodeSize;
+        while ((graph.col + 1) * edgeSize > width || (graph.row + 1) * edgeSize > height) {
+            if (nodeSize == 1) {
                 break;
             }
             nodeSize--;
-            edgeSize = 4*nodeSize;
+            edgeSize = 4 * nodeSize;
         }
-        int xnode = (width - (graph.col-1)*edgeSize)/2 - nodeSize/2;
-        int ynode = (height - (graph.row-1)*edgeSize)/2 - nodeSize/2;
+        int xnode = (width - (graph.col - 1) * edgeSize) / 2 - nodeSize / 2;
+        int ynode = (height - (graph.row - 1) * edgeSize) / 2 - nodeSize / 2;
         //wstawiam rząd po rzędzie czyli numeruję od lewej do prawej i schodzę w dół
-        for (int i=0; i<graph.row; i++) {
+        for (int i = 0; i < graph.row; i++) {
             for (int j = 0; j < graph.col; j++) {
-                nodeCoordinates[i*graph.col + j][0] = xnode + j * edgeSize;
-                nodeCoordinates[i*graph.col + j][1] = ynode + i * edgeSize;
-                gc.setFill(scale.ColorOfValue(path.cost[i* graph.col + j]));
-                gc.fillOval(nodeCoordinates[i*graph.col + j][0], nodeCoordinates[i*graph.col + j][1], nodeSize, nodeSize);
+                nodeCoordinates[i * graph.col + j][0] = xnode + j * edgeSize;
+                nodeCoordinates[i * graph.col + j][1] = ynode + i * edgeSize;
+                gc.setFill(scale.ColorOfValue(path.cost[i * graph.col + j]));
+                gc.fillOval(nodeCoordinates[i * graph.col + j][0], nodeCoordinates[i * graph.col + j][1], nodeSize, nodeSize);
             }
         }
+    }
+    public void drawPath(int finishNode){
+        int nodeSize = graph.getNodesSize(850,600);
+        gc.setStroke(Color.WHITE);
+        gc.setLineWidth(2);
+        int sEdge = finishNode;
+        int fEdge = path.last[sEdge];
+        while (fEdge != -1){
+            gc.strokeLine(graph.nodeCoordinates[sEdge][0] + nodeSize/2, graph.nodeCoordinates[sEdge][1] + nodeSize/2,
+                    graph.nodeCoordinates[fEdge][0] + nodeSize/2, graph.nodeCoordinates[fEdge][1] + nodeSize/2);
+            sEdge = fEdge;
+            fEdge = path.last[fEdge];
+        }
+    }
+    public void clearPaths(){
+        int nodeSize = graph.getNodesSize(850,600);
+        for (int sEdge : nodelist) {
+            int fEdge = path.last[sEdge];
+            while (fEdge != -1) {
+                for (Edge edge : graph.edges.get(sEdge)) {
+                    if (edge.fin == fEdge)
+                        gc.setStroke(edgeScale.ColorOfValue(edge.weight));
+                }
+                gc.strokeLine(graph.nodeCoordinates[sEdge][0] + nodeSize / 2, graph.nodeCoordinates[sEdge][1] + nodeSize / 2,
+                        graph.nodeCoordinates[fEdge][0] + nodeSize / 2, graph.nodeCoordinates[fEdge][1] + nodeSize / 2);
+                sEdge = fEdge;
+                fEdge = path.last[fEdge];
+            }
+        }
+        nodelist.clear();
     }
 
     public static void main(String[] args) {

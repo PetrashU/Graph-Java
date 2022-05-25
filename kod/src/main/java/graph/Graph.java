@@ -3,10 +3,7 @@ package graph;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 import Kratka.ColorScale;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,8 +12,8 @@ import javafx.scene.paint.Color;
 public class Graph {
     public int row;
     public int col;
-    public double[] weights;
-
+    // public double[] weights;
+    public HashMap<Integer, ArrayList<Edge>> edges = new HashMap<>();
     public double minWeight;
     public double maxWeight;
     public String ErrorMassage;
@@ -31,41 +28,53 @@ public class Graph {
         this.row = row;
         this.col = col;
         int iter = row * col;
-        weights = new double[iter*iter];
+        for (int i = 0; i < iter; i++)
+            edges.put(i,new ArrayList<Edge>());
         nodeCoordinates = new double[iter][2];
     }
-    public Graph(int row, int col, double[] weights){
+    public Graph(int row, int col, HashMap<Integer, ArrayList<Edge>> edges){
         this.row = row;
         this.col = col;
-        this.weights = weights;
+        this.edges = edges;
     }
     public double getMaxWeight(){
-        if (weights.length == 0)
+        if (edges.size() == 0)
             return 0;
-        double max = weights[0];
-        for(int i = 0; i < weights.length; i++){
-            if (weights[i] > max)
-                max = weights[i];
-        }
+        double max = 0;
+        for(int i = 0; i < (row*col); i++)
+            for (Edge edge : edges.get(i)){
+                if (edge.weight > max)
+                    max = edge.weight;
+            }
         return max;
     }
     public double getMinWeight() {
-        if (weights.length == 0)
+        if (edges.size() == 0)
             return 0;
-        double min;
-        int i = 0;
-        do {
-            min = weights[i];
-            i++;
-        } while (weights[i] == 0);
-        min = weights[i];
-        for (i = 0; i < weights.length; i++) {
-            if (weights[i] < min && weights[i] != 0)
-                min = weights[i];
-        }
+        double min = Double.POSITIVE_INFINITY;
+        for(int i = 0; i < (row*col); i++)
+            for (Edge edge : edges.get(i)){
+                if (edge.weight < min)
+                    min = edge.weight;
+            }
         return min;
     }
 
+    public int getNodesSize(int width, int height){
+        int nodeSize = 20;
+        int edgeSize = 4* nodeSize;
+        int iter = row * col;
+        //jeżeli graf się nie mieści, to go skaluję aż do skutku (do min. nodeSize == 1)
+        //zachowując zależność że edgeSize jest 4 razy dłuższy niż rozmiar node'a
+        while ((col+1)*edgeSize > width || (row+1)*edgeSize > height){
+            if (nodeSize == 1){
+                break;
+            }
+            nodeSize--;
+            edgeSize = 4* nodeSize;
+        }
+        return nodeSize;
+    }
 
     public void drawGraph(GraphicsContext gc, int width, int height, ColorScale scale){
         gc.setFill(Color.ANTIQUEWHITE);
@@ -94,9 +103,11 @@ public class Graph {
         }
         for (int i=0; i<iter; i++){
             for (int j=i; j<iter; j++){
-                gc.setStroke(scale.ColorOfValue(weights[i*iter + j]));
-                if (weights[i*iter + j] > 0 ) {
-                    gc.strokeLine(nodeCoordinates[i][0]+nodeSize/2, nodeCoordinates[i][1]+nodeSize/2, nodeCoordinates[j][0]+nodeSize/2, nodeCoordinates[j][1]+nodeSize/2);
+                for (Edge edge : edges.get(i)){
+                    if (edge.fin == j){
+                        gc.setStroke(scale.ColorOfValue(edge.weight));
+                        gc.strokeLine(nodeCoordinates[i][0]+nodeSize/2, nodeCoordinates[i][1]+nodeSize/2, nodeCoordinates[j][0]+nodeSize/2, nodeCoordinates[j][1]+nodeSize/2);
+                    }
                 }
             }
         }
@@ -105,32 +116,30 @@ public class Graph {
     public void generateGraph(boolean connect) {
         Random random = new Random();
         int iter = row * col;
+
         boolean condition1, condition2, condition3, condition4;
-        for (int i = 0; i < iter * iter; i++) {
-            weights[i] = 0.0;
-        }
+
         int blank = -1;
         if (!connect) {
             blank = random.nextInt() % iter;
         }
+        ArrayList<Edge> list = new ArrayList<>();
         for (int i = 0; i < iter; i++) {
             for (int j = i; j < iter; j++) {
                 condition1 = (j == i + 1 && ((i + 1) % col != 0));
                 condition2 = (j == i - 1 && ((i % col) != 0));
                 condition3 = (j == i - col && i >= col);
                 condition4 = (j == i + col && i < iter - col);
-
                 if (condition1 || condition2 || condition3 || condition4) {
                     if (connect || random.nextDouble(1) > 0.5) {
-                        weights[i * iter + j] = minWeight + random.nextDouble(1) * (maxWeight - minWeight);
-                        weights[j * iter + i] = weights[i * iter + j];
-                    } else {
-                        weights[i * iter + j] = 0.0;
-                        weights[j * iter + i] = 0.0;
-                    }
-                    if (i == blank || j == blank) {
-                        weights[i * iter + j] = 0.0;
-                        weights[j * iter + i] = 0.0;
+                        Edge tmp = new Edge();
+                        Edge tmp1 = new Edge();
+                        tmp.fin = j;
+                        tmp.weight = minWeight + random.nextDouble(1) * (maxWeight - minWeight);
+                        edges.get(i).add(tmp);
+                        tmp1.fin = i;
+                        tmp1.weight = tmp.weight;
+                        edges.get(j).add(tmp1);
                     }
                 }
             }
@@ -146,11 +155,9 @@ public class Graph {
             col = scanner.nextInt();
             scanner.close();
             int iter = col * row;
-            weights = new double[iter * iter];
+            for (int i = 0; i < iter; i++)
+                edges.put(i,new ArrayList<Edge>());
             nodeCoordinates = new double[iter][2];
-            for (int i = 0; i < iter * iter; i++) {
-                weights[i] = 0.0;
-            }
             while ((line = r.readLine()) != null) {
                 //mam linię w postaci stringu - mogę teraz na niej operować
                 line = line.trim();
@@ -158,13 +165,16 @@ public class Graph {
                 //data to tablica danych w postaci stringów z jednej linii
                 for (int i=0; i< data.length; i+=2){
                     index = Integer.parseInt(data[i]);
-                    weights[lineNumber * iter + index] = Double.parseDouble(data[i+1]);
+                    Edge tmp = new Edge();
+                    tmp.fin = index;
+                    tmp.weight = Double.parseDouble(data[i+1]);
+                    edges.get(lineNumber).add(tmp);
                 }
                 lineNumber++;
             }
         }
         catch(IOException ioe){
-            ioe.getMessage();
+            ErrorMassage = ioe.getMessage();
         }
     }
 
@@ -174,41 +184,41 @@ public class Graph {
         boolean flag = true;
         for (int i=0; i<iter; i++){
             flag = true;
-            for (int j=0; j<iter; j++){
-                if (weights[i * iter + j] > 0.0){
-                    if (flag){
-                        w.print("\t");
-                        flag = false;
-                    }
-                    w.print("  " + j + " :" + weights[i * iter + j]);
+            for (Edge edge : edges.get(i)){
+                if (flag){
+                    w.print("\t");
+                    flag = false;
                 }
+                w.print("  " + edge.fin + " :" + edge.weight);
             }
             w.print("\n");
         }
     }
-    public boolean bfs(){
-        ArrayList<Integer> queue = new ArrayList<>();		//kolejka pryorytetowa
-        boolean[] flag= new boolean[col * row];		//flaga odwiedzenia wierzchołka
-        int k = 0;
-        int n = 1;
-        queue.add(0);
-        Arrays.fill(flag, false);
-        for (int i = 0; i < n; i++){		//przechodzimy po wszystkich wierzchołkach z kolejki
-            flag[queue.get(k)]= true;			//odznaczamy obecny wierzchołek jako odwiedzony
-            for (int j = 0; j < (col * row); j++)
-                if (this.weights[queue.get(k) * col * row + j] != 0 && !flag[j])	//szukamy krawędzi
-                {
-                    n++;		//zwiększamy liczbę wierzchołków w kolecje
-                    queue.add(j);	//dodajemy do kolejki wierzchołek, do którego prowadzi krawędź
-                }
+    public boolean bfs()
+    {
+        boolean[] flag = new boolean[col*row];
+        LinkedList<Integer> queue = new LinkedList<Integer>();
 
-            k++;	//idziemy do kolejnego numera w kolejce
+        flag[0]=true;
+        queue.add(0);
+
+        int s;
+        while (queue.size() != 0)
+        {
+            s = queue.poll();
+
+            for (Edge edge : edges.get(s)) {
+                int n = edge.fin;
+                if (!flag[n]) {
+                    flag[n] = true;
+                    queue.add(n);
+                }
+            }
         }
-        //sprawdzamy odwiedzenie wszystkich wierzchołków
-        for (int i=0; i < (col * row); i++)
-            if (!flag[i])
+        for (int i = 0; i < (row*col); i++)
+            if(!flag[i])
                 return false;
-        return true;    //spójny
+        return true;
     }
     public Path dijkstra(int st){
         int[] q = new int[row*col];		//tabela, pokazująca, czy odpowiedni węzeł był odwiedzony
@@ -233,13 +243,16 @@ public class Graph {
             }
             if (min_i != -1)
             {
-                for( int i = 0; i < (col*row); i++){		//przypisujemy dojścia do sąsiadów
-                    if (this.weights[min_i * col * row + i] > 0)
-                    {
-                        tmp = min + this.weights[min_i * col * row + i];
-                        if (tmp < path.cost[i]){
-                            path.cost[i] = tmp;
-                            path.last[i] = min_i;
+                for(int i = 0; i < iter; i++){		//przypisujemy dojścia do sąsiadów
+                    for (Edge edge : edges.get(min_i)) {
+                        if ((edge.fin == i))
+                        {
+                            int k = edge.fin;
+                            tmp = min + edge.weight;
+                            if (tmp < path.cost[k]){
+                                path.cost[k] = tmp;
+                                path.last[k] = min_i;
+                            }
                         }
                     }
                 }
