@@ -13,7 +13,10 @@ public class Graph {
     public int row;
     public int col;
     // public double[] weights;
-    public HashMap<Integer, ArrayList<Edge>> edges = new HashMap<>();
+    public HashMap<Integer, ArrayList<Edge>> edges = new HashMap<>();   //graf w postaci listy: Integer - numer wierzchołka; ArrayList<Edge> - lista wszystkich krawędzi od niego
+                            //edges.get(i)... - siągamy po listę krawędzi od wierzchołka i
+                            //edges.get(i).size() - liczba tych krawędzi
+                            //edges.get(i).get(j).fin/weight - siągamy po krawędz j, prowadzoną od wierzchołka nr.i  i bierzemy wierzchołek końcowy fin lub wagę weight
     public double minWeight;
     public double maxWeight;
     public String ErrorMassage;
