@@ -5,7 +5,7 @@ public class Edge {
     public double weight;
 
     public Edge(){}
-    public Edge(int st, int fin, double weight){
+    public Edge(int fin, double weight){
         this.fin = fin;
         this.weight = weight;
     }

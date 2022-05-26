@@ -1,5 +1,6 @@
 package graph;
 
+import java.awt.List;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,7 +33,7 @@ public class Graph {
         this.col = col;
         int iter = row * col;
         for (int i = 0; i < iter; i++)
-            edges.put(i,new ArrayList<Edge>());
+            edges.put(i, new ArrayList<Edge>());
         nodeCoordinates = new double[iter][2];
     }
     public Graph(int row, int col, HashMap<Integer, ArrayList<Edge>> edges){
@@ -79,7 +80,7 @@ public class Graph {
         return nodeSize;
     }
 
-    public void drawGraph(GraphicsContext gc, int width, int height, ColorScale scale){
+    public void drawGraph(GraphicsContext gc, int width, int height, ColorScale scale){     //trzeba pomyśleć, czy można szybciej rysować
         gc.setFill(Color.ANTIQUEWHITE);
         gc.setLineWidth(2);
         int nodeSize = 20;
@@ -105,13 +106,10 @@ public class Graph {
             }
         }
         for (int i=0; i<iter; i++){
-            for (int j=i; j<iter; j++){
-                for (Edge edge : edges.get(i)){
-                    if (edge.fin == j){
-                        gc.setStroke(scale.ColorOfValue(edge.weight));
-                        gc.strokeLine(nodeCoordinates[i][0]+nodeSize/2, nodeCoordinates[i][1]+nodeSize/2, nodeCoordinates[j][0]+nodeSize/2, nodeCoordinates[j][1]+nodeSize/2);
-                    }
-                }
+            for (Edge edge : edges.get(i)){
+                int j = edge.fin;
+                gc.setStroke(scale.ColorOfValue(edge.weight));
+                gc.strokeLine(nodeCoordinates[i][0]+nodeSize/2, nodeCoordinates[i][1]+nodeSize/2, nodeCoordinates[j][0]+nodeSize/2, nodeCoordinates[j][1]+nodeSize/2);
             }
         }
 
@@ -122,10 +120,6 @@ public class Graph {
 
         boolean condition1, condition2, condition3, condition4;
 
-        int blank = -1;
-        if (!connect) {
-            blank = random.nextInt() % iter;
-        }
         ArrayList<Edge> list = new ArrayList<>();
         for (int i = 0; i < iter; i++) {
             for (int j = i; j < iter; j++) {
@@ -159,7 +153,7 @@ public class Graph {
             scanner.close();
             int iter = col * row;
             for (int i = 0; i < iter; i++)
-                edges.put(i,new ArrayList<Edge>());
+                edges.put(i, new ArrayList<Edge>());
             nodeCoordinates = new double[iter][2];
             while ((line = r.readLine()) != null) {
                 //mam linię w postaci stringu - mogę teraz na niej operować
@@ -200,7 +194,7 @@ public class Graph {
     public boolean bfs()
     {
         boolean[] flag = new boolean[col*row];
-        LinkedList<Integer> queue = new LinkedList<Integer>();
+        PriorityQueue<Integer> queue = new PriorityQueue<Integer>();
 
         flag[0]=true;
         queue.add(0);
@@ -223,46 +217,62 @@ public class Graph {
                 return false;
         return true;
     }
-    public Path dijkstra(int st){
-        int[] q = new int[row*col];		//tabela, pokazująca, czy odpowiedni węzeł był odwiedzony
-        int min_i;
-        double tmp, min;
-        int iter = row * col;
-        Path path = new Path();
-        path.cost = new double[iter];
-        path.last = new int[iter];
-        Arrays.fill(q, 0);
-        Arrays.fill(path.cost, Double.POSITIVE_INFINITY);
-        Arrays.fill(path.last, -1);
-        path.cost[st] = 0;
-        do{				//wykonujemy pętlę aż indeks węzła o najmniejszym koszcie dojścia nie będzie pusty
-            min = Double.POSITIVE_INFINITY;
-            min_i = -1;
-            for(int i = 0; i < (row * col); i++){	//szukamy węzeł o najmniejszym koszcie dojścia
-                if ((q[i] == 0) && (path.cost[i] < min)){
-                    min = path.cost[i];
-                    min_i = i;
+    public static class NodeAndCost{
+        int node;
+        double cost;
+        public NodeAndCost(int n, double c){ node= n; cost = c;};
+    }
+    public static class CostComparator implements Comparator<NodeAndCost>{
+        @Override
+        public int compare(NodeAndCost o1, NodeAndCost o2) {
+            return Double.compare(o1.cost, o2.cost);
+        }
+    }
+
+    public static class NodesQueue extends java.util.ArrayList<NodeAndCost> {
+        public void updatenodes(int n, double cost){
+            for (NodeAndCost nodeAndCost : this){
+                if (nodeAndCost.node == n){
+                    nodeAndCost.cost = cost;
+                    return;
                 }
             }
-            if (min_i != -1)
-            {
-                for(int i = 0; i < iter; i++){		//przypisujemy dojścia do sąsiadów
-                    for (Edge edge : edges.get(min_i)) {
-                        if ((edge.fin == i))
-                        {
-                            int k = edge.fin;
-                            tmp = min + edge.weight;
-                            if (tmp < path.cost[k]){
-                                path.cost[k] = tmp;
-                                path.last[k] = min_i;
+            this.add(new NodeAndCost(n, cost));
+        }
+    }
+
+    public Path dijkstra(int st){
+        boolean[] visited = new boolean[row*col];		//tabela, pokazująca, czy odpowiedni węzeł był odwiedzony
+        NodesQueue queue = new NodesQueue();
+        double tmp;
+        int iter = row * col;
+        double []cost = new double[iter];
+        int[] last = new int[iter];
+        Arrays.fill(visited, false);
+        Arrays.fill(cost, Double.POSITIVE_INFINITY);
+        Arrays.fill(last, -1);
+        cost[st] = 0;
+
+        queue.add(new NodeAndCost(st, 0));
+        while (queue.size() != 0){
+            queue.sort(new CostComparator());
+            NodeAndCost node = queue.get(0);
+            queue.remove(0);
+            int i = node.node;
+            double l = node.cost;
+            if (!visited[i]){     //przypisujemy dojścia do sąsiadów
+                for (Edge edge : edges.get(i)) {
+                        int k = edge.fin;
+                        tmp = l + edge.weight;
+                        if (tmp < cost[k]) {
+                            cost[k] = tmp;
+                            last[k] = i;
+                            queue.updatenodes(k, tmp);
                             }
                         }
-                    }
-                }
-                q[min_i] = 1;
             }
-        } while (min_i != -1);
-        return path;
+        }
+        return new Path(cost, last);
     }
 
 }

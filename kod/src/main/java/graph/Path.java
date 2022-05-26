@@ -9,6 +9,10 @@ public class Path {
 
     public Path(){
     }
+    public Path(double[] cost, int[] last){
+        this.cost = cost;
+        this.last = last;
+    }
     public double getMaxCost(){
         if (cost.length == 0){
             return 0;
