@@ -35,8 +35,10 @@ public class Kratka extends Application {
     public GraphicsContext gc;
     public Graph graph;
     public Path path;
-    public ColorScale edgeScale;
-    public ColorScale nodeScale;
+    public Color nodeColor = Color.ANTIQUEWHITE;
+    public Color pathColor = Color.WHITE;
+    public ColorScale edgeScale = new ColorScale();
+    public ColorScale nodeScale = new ColorScale();
     public ArrayList<Integer> nodelist = new ArrayList<>();     //lista wierzchołków końcowych
 
 
@@ -174,7 +176,7 @@ public class Kratka extends Application {
                  */
 
 
-                graph.drawGraph(gc, 850, 600, edgeScale);
+                graph.drawGraph(gc, 850, 600, edgeScale, nodeColor);
             } catch (Exception e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
@@ -222,12 +224,12 @@ public class Kratka extends Application {
                     minweight = graph.getMinWeight();
                     edgemin.setText(String.valueOf(minweight));
                     textweightlow.setText(String.valueOf(minweight));
-                    edgeScale.min = minweight;
+                    edgeScale.changeMin(minweight);
                     graph.maxWeight = graph.getMaxWeight();
                     maxweight = graph.getMaxWeight();
                     edgemax.setText(String.valueOf(maxweight));
                     textweighthigh.setText(String.valueOf(maxweight));
-                    edgeScale.max = maxweight;
+                    edgeScale.changeMax(maxweight);
 
                     nodemax.setText("");
                     nodemin.setText("");
@@ -236,7 +238,7 @@ public class Kratka extends Application {
                         connected.setSelected(true);
                     else
                         notconnected.setSelected(true);
-                    graph.drawGraph(gc,850,600, edgeScale);
+                    graph.drawGraph(gc,850,600, edgeScale, nodeColor);
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
@@ -279,7 +281,7 @@ public class Kratka extends Application {
                     nodemin.setText(String.valueOf(nodecostmin));
                     nodemax.setText(String.valueOf(nodecostmax));
 
-                    nodeScale = new ColorScale(nodecostmin, nodecostmax);
+                    nodeScale.set(nodecostmin, nodecostmax);
 
                     addColorNodes(850, 600, nodeScale);
 
@@ -304,7 +306,7 @@ public class Kratka extends Application {
                         }
                     }
                     nodelist.add(finishNode);
-                    drawPath(finishNode);
+                    drawPath(finishNode, pathColor);
 
                     //System.out.println("koncowy node: " + node);
                 }
@@ -396,12 +398,13 @@ public class Kratka extends Application {
         root.getChildren().add(canvas);
 
 
-        Label edgecolor = new Label("Edge color scale");
-        HBox colorfirst = new HBox(325, edgemin, edgecolor, edgemax);
+        Label edgecolorlable = new Label("Edge color scale");
+        HBox colorfirst = new HBox(325, edgemin, edgecolorlable, edgemax);
         root.getChildren().add(colorfirst);
 
-        edgeScale = new ColorScale(minweight, maxweight);
-        ImageView scaleimg = new ImageView(edgeScale.DrawColorScale(850, 20));
+        edgeScale.set(minweight, maxweight);
+        ImageView scaleimg = new ImageView();
+        scaleimg.setImage(edgeScale.DrawColorScale(850, 20));
 
         root.getChildren().add(scaleimg);
 
@@ -410,16 +413,21 @@ public class Kratka extends Application {
 
         nodemin.setText(String.valueOf(nodecostmin));
         nodemax.setText(String.valueOf(nodecostmax));*/
-        Label nodecolor = new Label("Node color scale");
-        HBox colorsecond = new HBox(325, nodemin, nodecolor, nodemax);
+        Label nodecolorlable = new Label("Node color scale");
+        HBox colorsecond = new HBox(325, nodemin, nodecolorlable, nodemax);
         root.getChildren().add(colorsecond);
+
 
         Button changescale = new Button("Modify color scale");
         changescale.setOnAction(e -> {
             ColorPicker colorPicker1 = new ColorPicker(); //color max weight edge
+            colorPicker1.setValue(edgeScale.maxColor);
             ColorPicker colorPicker2 = new ColorPicker(); //color min weight edge
+            colorPicker2.setValue(edgeScale.minColor);
             ColorPicker colorPicker3 = new ColorPicker(); //color node
+            colorPicker3.setValue(nodeColor);
             ColorPicker colorPicker4 = new ColorPicker(); //color path
+            colorPicker4.setValue(pathColor);
             Label cpLabel1 = new Label("Max weight edge color");
             Label cpLabel2 = new Label("Min weight edge color");
             Label cpLabel3 = new Label("Node color");
@@ -440,10 +448,33 @@ public class Kratka extends Application {
             Stage stageColorScale = new Stage();
             stageColorScale.setWidth(200);
             stageColorScale.setHeight(300);
+            Button action = new Button("OK");
+            action.setOnAction(k ->{
+                edgeScale.maxColor = colorPicker1.getValue();
+                edgeScale.minColor = colorPicker2.getValue();
+                nodeScale.maxColor = edgeScale.maxColor;
+                nodeScale.minColor = edgeScale.minColor;
+                nodeColor = colorPicker3.getValue();
+                pathColor = colorPicker4.getValue();
+                stageColorScale.close();
+                scaleimg.setImage(edgeScale.DrawColorScale(850, 20));
+                if (graph != null){
+                    gc.setFill(Color.BLACK);
+                    gc.fillRect(0, 0, 850, 600);
+                    graph.drawGraph(gc, 850,600, edgeScale, nodeColor);
+                    if (path != null)
+                        addColorNodes(850,600,nodeScale);
+                    if (nodelist.size() != 0) {
+                        for (Integer integer : nodelist) drawPath(integer, pathColor);
+                    }
+                }
+            });
+            chooseColors.getChildren().add(action);
             Scene sceneColorScale = new Scene(chooseColors);
             stageColorScale.setScene(sceneColorScale);
             stageColorScale.setResizable(false);
             stageColorScale.show();
+
         });
 
         root.getChildren().add(changescale);
@@ -480,9 +511,9 @@ public class Kratka extends Application {
             }
         }
     }
-    public void drawPath(int finishNode){
+    public void drawPath(int finishNode, Color color){
         int nodeSize = graph.getNodesSize(850,600);
-        gc.setStroke(Color.WHITE);
+        gc.setStroke(color);
         gc.setLineWidth(2);
         int sEdge = finishNode;
         int fEdge = path.last[sEdge];

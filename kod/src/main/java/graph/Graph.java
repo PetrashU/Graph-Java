@@ -80,8 +80,8 @@ public class Graph {
         return nodeSize;
     }
 
-    public void drawGraph(GraphicsContext gc, int width, int height, ColorScale scale){     //trzeba pomyśleć, czy można szybciej rysować
-        gc.setFill(Color.ANTIQUEWHITE);
+    public void drawGraph(GraphicsContext gc, int width, int height, ColorScale scale, Color nodeColor){     //trzeba pomyśleć, czy można szybciej rysować
+        gc.setFill(nodeColor);
         gc.setLineWidth(2);
         int nodeSize = 20;
         int edgeSize = 4*nodeSize;
