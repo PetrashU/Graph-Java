@@ -15,9 +15,9 @@ public class Graph {
     public int col;
     // public double[] weights;
     public HashMap<Integer, ArrayList<Edge>> edges = new HashMap<>();   //graf w postaci listy: Integer - numer wierzchołka; ArrayList<Edge> - lista wszystkich krawędzi od niego
-                            //edges.get(i)... - siągamy po listę krawędzi od wierzchołka i
-                            //edges.get(i).size() - liczba tych krawędzi
-                            //edges.get(i).get(j).fin/weight - siągamy po krawędz j, prowadzoną od wierzchołka nr.i  i bierzemy wierzchołek końcowy fin lub wagę weight
+    //edges.get(i)... - siągamy po listę krawędzi od wierzchołka i
+    //edges.get(i).size() - liczba tych krawędzi
+    //edges.get(i).get(j).fin/weight - siągamy po krawędz j, prowadzoną od wierzchołka nr.i  i bierzemy wierzchołek końcowy fin lub wagę weight
     public double minWeight;
     public double maxWeight;
     public String ErrorMassage;
@@ -66,45 +66,36 @@ public class Graph {
         return min;
     }
 
-    public int getNodesSize(int width, int height){
-        int nodeSize = 20;
-        int edgeSize = 4* nodeSize;
-        int iter = row * col;
-        //jeżeli graf się nie mieści, to go skaluję aż do skutku (do min. nodeSize == 1)
-        //zachowując zależność że edgeSize jest 4 razy dłuższy niż rozmiar node'a
+    public double getNodesSize(int width, int height){
+        double scalar = 3;
+        double nodeSize = 30;
+        double edgeSize = scalar * nodeSize;
         while ((col+1)*edgeSize > width || (row+1)*edgeSize > height){
-            if (nodeSize == 1){
+            if (nodeSize <= 2 || scalar <= 0.5){
                 break;
             }
-            nodeSize--;
-            edgeSize = 4* nodeSize;
+            nodeSize -= 0.5;
+            scalar -= 0.03;
+            edgeSize = scalar * nodeSize;
         }
         return nodeSize;
     }
 
-    public void drawGraph(GraphicsContext gc, int width, int height, ColorScale scale, Color nodeColor){     //trzeba pomyśleć, czy można szybciej rysować
+    public void drawGraph(GraphicsContext gc, int width, int height, ColorScale scale, Color nodeColor){
         gc.setFill(nodeColor);
-        gc.setLineWidth(2);
-        int nodeSize = 20;
-        int edgeSize = 4*nodeSize;
+        double nodeSize = getNodesSize(width, height);
+        double num = (30 - nodeSize)*2;
+        double scalar = 3 - 0.03*num;
+        double edgeSize = scalar * nodeSize;
         int iter = row * col;
-        //jeżeli graf się nie mieści, to go skaluję aż do skutku (do min. nodeSize == 1)
-        //zachowując zależność że edgeSize jest 4 razy dłuższy niż rozmiar node'a
-        while ((col+1)*edgeSize > width || (row+1)*edgeSize > height){
-            if (nodeSize == 1){
-                break;
-            }
-            nodeSize--;
-            edgeSize = 4*nodeSize;
-        }
-        int xnode = (width - (col-1)*edgeSize)/2 - nodeSize/2;
-        int ynode = (height - (row-1)*edgeSize)/2 - nodeSize/2;
+        gc.setLineWidth(nodeSize/4);
+        double xnode = (width - (col-1)*edgeSize)/2 - nodeSize/2;
+        double ynode = (height - (row-1)*edgeSize)/2 - nodeSize/2;
         //wstawiam rząd po rzędzie czyli numeruję od lewej do prawej i schodzę w dół
         for (int i=0; i<row; i++) {
-            for (int j = 0; j < col; j++) {
+            for (int j=0; j<col; j++) {
                 nodeCoordinates[i*col + j][0] = xnode + j * edgeSize;
                 nodeCoordinates[i*col + j][1] = ynode + i * edgeSize;
-                gc.fillOval(nodeCoordinates[i*col + j][0], nodeCoordinates[i*col + j][1], nodeSize, nodeSize);
             }
         }
         for (int i=0; i<iter; i++){
@@ -112,6 +103,11 @@ public class Graph {
                 int j = edge.fin;
                 gc.setStroke(scale.ColorOfValue(edge.weight));
                 gc.strokeLine(nodeCoordinates[i][0]+nodeSize/2, nodeCoordinates[i][1]+nodeSize/2, nodeCoordinates[j][0]+nodeSize/2, nodeCoordinates[j][1]+nodeSize/2);
+            }
+        }
+        for (int i=0; i<row; i++){
+            for (int j=0; j<col; j++){
+                gc.fillOval(nodeCoordinates[i*col + j][0], nodeCoordinates[i*col + j][1], nodeSize, nodeSize);
             }
         }
 
@@ -264,14 +260,14 @@ public class Graph {
             double l = node.cost;
             if (!visited[i]){     //przypisujemy dojścia do sąsiadów
                 for (Edge edge : edges.get(i)) {
-                        int k = edge.fin;
-                        tmp = l + edge.weight;
-                        if (tmp < cost[k]) {
-                            cost[k] = tmp;
-                            last[k] = i;
-                            queue.updatenodes(k, tmp);
-                            }
-                        }
+                    int k = edge.fin;
+                    tmp = l + edge.weight;
+                    if (tmp < cost[k]) {
+                        cost[k] = tmp;
+                        last[k] = i;
+                        queue.updatenodes(k, tmp);
+                    }
+                }
             }
         }
         return new Path(cost, last);
