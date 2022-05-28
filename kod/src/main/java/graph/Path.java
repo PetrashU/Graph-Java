@@ -38,7 +38,6 @@ public class Path {
     public void savePath(PrintWriter w, Graph graph, int node){
         ArrayList<Integer> path = new ArrayList<>();
         ArrayList<Double> weight = new ArrayList<>();
-        w.println("Najkrótsza ścieżka:");
         int i = node;
         path.add(node);
         while (last[i] != -1) {
@@ -49,6 +48,7 @@ public class Path {
             }
             i = last[i];
         }
+        w.println("Najkrótsza ścieżka od " + path.get(path.size()-1) + " do " + path.get(0) + ":");
         for (int j = path.size() - 1; j > 0; j--) {
             w.print( path.get(j) +" -" + weight.get(j-1) + "- ");
         }
