@@ -39,7 +39,9 @@ public class Graph {
     public Graph(int row, int col, HashMap<Integer, ArrayList<Edge>> edges){
         this.row = row;
         this.col = col;
-        this.edges = edges;
+        this.edges.putAll(edges);
+        int iter = row * col;
+        nodeCoordinates = new double[iter][2];
     }
     public double getMaxWeight(){
         if (edges.size() == 0)
