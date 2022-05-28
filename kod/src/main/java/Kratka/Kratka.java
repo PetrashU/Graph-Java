@@ -6,7 +6,9 @@ import graph.Path;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -166,15 +168,7 @@ public class Kratka extends Application {
                     Random random = new Random();
                     connection = random.nextBoolean();
                 }
-                // Test: System.out.println(row + " "+ col +" "+ minweight+ " "+ maxweight+ " "+ connection);
                 graph.generateGraph(connection);
-
-                /*wypisywanie wag grafu do testowania
-                for (int i=0; i<graph.weights.length; i++){
-                    System.out.println(graph.weights[i]);
-                }
-                 */
-
 
                 graph.drawGraph(gc, 850, 600, edgeScale, nodeColor);
             } catch (Exception e) {
@@ -253,6 +247,7 @@ public class Kratka extends Application {
                 MouseButton mb = me.getButton();
                 int startNode = 0;
                 int finishNode = graph.row * graph.col - 1;
+                //wierzchołek startowy - wybór poprzez lewy przycisk myszy
                 if (mb == MouseButton.PRIMARY) {
                     clearPaths();
                     if (!graph.bfs()) {
@@ -262,10 +257,10 @@ public class Kratka extends Application {
                         alert.showAndWait();
                         return;
                     }
+                    //indeks wierzchołka startowego jest wyznaczany na podstawie współrzędnych miejsca kliknięcia
                     double xl = me.getX();
                     double yl = me.getY();
-                    //System.out.println("wspolrzedne lewy guzik x, y: " + xl + ", " +yl);
-                    double sum = 1000;
+                    double sum = 1000; //zmienna pomocnicza, która na pewno będzie większa niż suma różnicy między współrzędnymi wierzchołka a kliknięcia
                     for (int i = 0; i < (graph.col * graph.row); i++) {
                         if (sum > Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl)) {
                             sum = Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl);
@@ -285,8 +280,8 @@ public class Kratka extends Application {
 
                     addColorNodes(850, 600, nodeScale);
 
-                    //System.out.println("startowy node: " + st);
                 }
+                //wierzchołek końcowy - wybór poprzez prawy przycisk myszy
                 else if (mb == MouseButton.SECONDARY) {
                     if (path == null){
                         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -297,7 +292,6 @@ public class Kratka extends Application {
                     }
                     double xr = me.getX();
                     double yr = me.getY();
-                    //System.out.println("wspolrzedne prawy guzik x, y: " + xr + ", " +yr);
                     double sum = 1000;
                     for (int i=0; i<(graph.col * graph.row); i++) {
                         if (sum > Math.abs(graph.nodeCoordinates[i][0] - xr) + Math.abs(graph.nodeCoordinates[i][1] - yr)){
@@ -307,8 +301,6 @@ public class Kratka extends Application {
                     }
                     nodelist.add(finishNode);
                     drawPath(finishNode, pathColor);
-
-                    //System.out.println("koncowy node: " + node);
                 }
 
             }
@@ -323,11 +315,6 @@ public class Kratka extends Application {
             try {
                 if (savefile != null) {
                     PrintWriter w = new PrintWriter(savefile);
-
-                    // for (int i=0; i<graph.weights.length; i++){
-                    //      System.out.println(graph.weights[i]);
-                    //  }
-
                     graph.saveGraph(w);
                     w.close();
                 }
@@ -408,11 +395,11 @@ public class Kratka extends Application {
 
         root.getChildren().add(scaleimg);
 
-       /*double nodecostmin = 0.0;
+        double nodecostmin = 0.0;
         double nodecostmax = 10.0;
 
         nodemin.setText(String.valueOf(nodecostmin));
-        nodemax.setText(String.valueOf(nodecostmax));*/
+        nodemax.setText(String.valueOf(nodecostmax));
         Label nodecolorlable = new Label("Node color scale");
         HBox colorsecond = new HBox(325, nodemin, nodecolorlable, nodemax);
         root.getChildren().add(colorsecond);
@@ -435,9 +422,10 @@ public class Kratka extends Application {
             Label cpTitle = new Label("Choose colors: ");
             Label[] cpLabels;
             cpLabels = new Label[]{cpLabel1, cpLabel2, cpLabel3, cpLabel4};
-            FlowPane chooseColors = new FlowPane();
-            chooseColors.setPadding(new Insets(10, 20, 10, 30));
-            chooseColors.setVgap(4);
+            FlowPane chooseColors = new FlowPane(Orientation.VERTICAL);
+            chooseColors.setPadding(new Insets(50, 50, 50, 50));
+            chooseColors.setVgap(10);
+            chooseColors.setColumnHalignment(HPos.CENTER);
             ColorPicker[] colorPickers;
             colorPickers = new ColorPicker[]{colorPicker1, colorPicker2, colorPicker3, colorPicker4};
             chooseColors.getChildren().add(cpTitle);
@@ -446,8 +434,8 @@ public class Kratka extends Application {
                 chooseColors.getChildren().add(colorPickers[i]);
             }
             Stage stageColorScale = new Stage();
-            stageColorScale.setWidth(200);
-            stageColorScale.setHeight(300);
+            stageColorScale.setWidth(250);
+            stageColorScale.setHeight(450);
             Button action = new Button("OK");
             action.setOnAction(k ->{
                 edgeScale.maxColor = colorPicker1.getValue();
@@ -487,34 +475,17 @@ public class Kratka extends Application {
     }
 
     public void addColorNodes(int width, int height, ColorScale scale) {
-        int iter = graph.row * graph.col;
-        double[][] nodeCoordinates = new double[iter][2];
-        gc.setLineWidth(2);
-        int nodeSize = 20;
-        int edgeSize = 4 * nodeSize;
-        while ((graph.col + 1) * edgeSize > width || (graph.row + 1) * edgeSize > height) {
-            if (nodeSize == 1) {
-                break;
-            }
-            nodeSize--;
-            edgeSize = 4 * nodeSize;
-        }
-        int xnode = (width - (graph.col - 1) * edgeSize) / 2 - nodeSize / 2;
-        int ynode = (height - (graph.row - 1) * edgeSize) / 2 - nodeSize / 2;
-        //wstawiam rząd po rzędzie czyli numeruję od lewej do prawej i schodzę w dół
-        for (int i = 0; i < graph.row; i++) {
-            for (int j = 0; j < graph.col; j++) {
-                nodeCoordinates[i * graph.col + j][0] = xnode + j * edgeSize;
-                nodeCoordinates[i * graph.col + j][1] = ynode + i * edgeSize;
+        for (int i=0; i<row; i++){
+            for (int j=0; j<col; j++){
                 gc.setFill(scale.ColorOfValue(path.cost[i * graph.col + j]));
-                gc.fillOval(nodeCoordinates[i * graph.col + j][0], nodeCoordinates[i * graph.col + j][1], nodeSize, nodeSize);
+                gc.fillOval(graph.nodeCoordinates[i*col + j][0], graph.nodeCoordinates[i*col + j][1], graph.getNodesSize(width,height), graph.getNodesSize(width,height));
             }
         }
     }
     public void drawPath(int finishNode, Color color){
-        int nodeSize = graph.getNodesSize(850,600);
+        double nodeSize = graph.getNodesSize(850,600);
         gc.setStroke(color);
-        gc.setLineWidth(2);
+        gc.setLineWidth(nodeSize/4);
         int sEdge = finishNode;
         int fEdge = path.last[sEdge];
         while (fEdge != -1){
@@ -525,21 +496,7 @@ public class Kratka extends Application {
         }
     }
     public void clearPaths(){
-        int nodeSize = graph.getNodesSize(850,600);
-        for (int sEdge : nodelist) {
-            int fEdge = path.last[sEdge];
-            while (fEdge != -1) {
-                for (Edge edge : graph.edges.get(sEdge)) {
-                    if (edge.fin == fEdge)
-                        gc.setStroke(edgeScale.ColorOfValue(edge.weight));
-                }
-                gc.strokeLine(graph.nodeCoordinates[sEdge][0] + nodeSize / 2, graph.nodeCoordinates[sEdge][1] + nodeSize / 2,
-                        graph.nodeCoordinates[fEdge][0] + nodeSize / 2, graph.nodeCoordinates[fEdge][1] + nodeSize / 2);
-                sEdge = fEdge;
-                fEdge = path.last[fEdge];
-            }
-        }
-        nodelist.clear();
+        graph.drawGraph(gc, 850, 600, edgeScale, nodeColor);
     }
 
     public static void main(String[] args) {
