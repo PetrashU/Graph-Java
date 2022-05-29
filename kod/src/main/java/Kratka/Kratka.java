@@ -465,7 +465,12 @@ public class Kratka extends Application {
 
         });
 
-        root.getChildren().add(changescale);
+        Button indices = new Button("Display nodes indices");
+        indices.setOnAction(e -> {
+            graph.displayNodesIndices(gc, 850, 600);
+                });
+        HBox bottomline = new HBox(600, changescale, indices);
+        root.getChildren().add(bottomline);
 
         Scene scene = new Scene(root, 850, 800);
 
