@@ -9,6 +9,7 @@ import java.util.*;
 import Kratka.ColorScale;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 public class Graph {
     public int row;
@@ -111,6 +112,22 @@ public class Graph {
             }
         }
 
+    }
+    public void displayNodesIndices(GraphicsContext gc, int width, int height){
+        gc.setLineWidth(1);
+        double nodeSize = getNodesSize(width, height);
+        gc.setStroke(Color.BLACK);
+        gc.setFont(Font.font("Lucida Sans Unicode", nodeSize/2));
+        double x; //zmienna używana do wyśrodkowania indeksów zależnie od wartości
+        for (int i=0; i<row*col; i++) {
+            if (i<10)
+                x = nodeSize/6;
+            else if (i<100)
+                x = 0;
+            else
+                x = - (nodeSize/4);
+            gc.strokeText(Integer.toString(i), nodeCoordinates[i][0] + nodeSize/4 + x, nodeCoordinates[i][1] + nodeSize*0.75);
+        }
     }
     public void generateGraph(boolean connect) {
         Random random = new Random();
