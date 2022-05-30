@@ -382,6 +382,30 @@ public class Kratka extends Application {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, 850, 600);
         canvas.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
+
+        Tooltip tooltip = new Tooltip();
+        tooltip.setStyle("-fx-font-size: 20");
+        Tooltip.install(canvas, tooltip);
+        canvas.setOnMouseMoved(e ->{
+            if (graph == null){
+                return;
+            }
+            int startNode = 0;
+            double xl = e.getX();
+            double yl = e.getY();
+            double sum = 1000; //zmienna pomocnicza, która na pewno będzie większa niż suma różnicy między współrzędnymi wierzchołka a kliknięcia
+            for (int i = 0; i < (graph.col * graph.row); i++) {
+                if (sum > Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl)) {
+                    sum = Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl);
+                    startNode = i;
+                }
+            }
+            tooltip.setText(Double.toString(startNode));
+        });
+        canvas.setOnMouseExited(e->{
+            tooltip.hide();
+        });
+
         root.getChildren().add(canvas);
 
 
