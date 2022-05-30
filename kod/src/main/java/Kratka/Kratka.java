@@ -352,8 +352,6 @@ public class Kratka extends Application {
         clean.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                gc.setFill(Color.BLACK);
-                gc.fillRect(0, 0, 850, 600);
                 clearPaths();
                 nodemin.setText("");
                 nodemax.setText("");
@@ -528,6 +526,8 @@ public class Kratka extends Application {
         }
     }
     public void clearPaths(){
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, 850, 600);
         graph.drawGraph(gc, 850, 600, edgeScale, nodeColor);
         path = null;
         nodelist.clear();
