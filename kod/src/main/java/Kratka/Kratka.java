@@ -1,6 +1,5 @@
 package Kratka;
 
-import graph.Edge;
 import graph.Graph;
 import graph.Path;
 import javafx.application.Application;

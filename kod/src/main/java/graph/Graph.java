@@ -1,6 +1,5 @@
 package graph;
 
-import java.awt.List;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,7 +8,6 @@ import java.util.*;
 import Kratka.ColorScale;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Ellipse;
 import javafx.scene.text.Font;
 
 public class Graph {
