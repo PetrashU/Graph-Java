@@ -352,7 +352,11 @@ public class Kratka extends Application {
         clean.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                gc.setFill(Color.BLACK);
+                gc.fillRect(0, 0, 850, 600);
                 clearPaths();
+                nodemin.setText("");
+                nodemax.setText("");
             }
         });
         Button delete = new Button("Delete");
@@ -399,7 +403,7 @@ public class Kratka extends Application {
                     startNode = i;
                 }
             }
-            tooltip.setText(Double.toString(startNode));
+            tooltip.setText(Integer.toString(startNode));
         });
         canvas.setOnMouseExited(e->{
             tooltip.hide();
@@ -513,7 +517,7 @@ public class Kratka extends Application {
     public void drawPath(int finishNode, Color color){
         double nodeSize = graph.getNodesSize(850,600);
         gc.setStroke(color);
-        gc.setLineWidth(nodeSize/4);
+        gc.setLineWidth(nodeSize/2);
         int sEdge = finishNode;
         int fEdge = path.last[sEdge];
         while (fEdge != -1){
@@ -525,6 +529,8 @@ public class Kratka extends Application {
     }
     public void clearPaths(){
         graph.drawGraph(gc, 850, 600, edgeScale, nodeColor);
+        path = null;
+        nodelist.clear();
     }
 
     public static void main(String[] args) {
