@@ -171,29 +171,31 @@ public class Graph {
                 edges.put(i, new ArrayList<Edge>());
             nodeCoordinates = new double[iter][2];
             while ((line = r.readLine()) != null) {
-                    //mam linię w postaci stringu - mogę teraz na niej operować
-                    line = line.trim();
-                    String[] data = line.split("[\\s:]+");
-                    //data to tablica danych w postaci stringów z jednej linii
-                    for (int i = 0; i < data.length; i += 2) {
-                        index = Integer.parseInt(data[i]);
-                        Edge tmp = new Edge();
-                        tmp.fin = index;
-                        tmp.weight = Double.parseDouble(data[i + 1]);
-                        if (tmp.weight < 0) {
-                            tmp.weight = Math.abs(tmp.weight);
-                            System.out.println(tmp.weight);
-                            flag = true;
-                        }
-                        edges.get(lineNumber).add(tmp);
+                //mam linię w postaci stringu - mogę teraz na niej operować
+                line = line.trim();
+                String[] data = line.split("[\\s:]+");
+                //data to tablica danych w postaci stringów z jednej linii
+                for (int i = 0; i < data.length; i += 2) {
+                    index = Integer.parseInt(data[i]);
+                    Edge tmp = new Edge();
+                    tmp.fin = index;
+                    tmp.weight = Double.parseDouble(data[i + 1]);
+                    if (tmp.weight < 0) {
+                        tmp.weight = Math.abs(tmp.weight);
+                        flag = true;
                     }
-                    lineNumber++;
+                    edges.get(lineNumber).add(tmp);
                 }
+                lineNumber++;
+            }
             if (flag){
                 WarningMassage.add("Wystąpiła ujemna waga w grafie. Waga została zamieniona na jej wartość bezwzględną.");
             }
         }
         catch(IOException e){
+            ErrorMassage = "Nieprawidłowy format grafu.";
+        }
+        catch(Exception exception){
             ErrorMassage = "Nieprawidłowy format grafu.";
         }
     }
