@@ -463,10 +463,10 @@ public class Kratka extends Application {
             stageColorScale.setHeight(450);
             Button action = new Button("OK");
             action.setOnAction(k ->{
-                edgeScale.maxColor = colorPicker1.getValue();
-                edgeScale.minColor = colorPicker2.getValue();
-                nodeScale.maxColor = edgeScale.maxColor;
-                nodeScale.minColor = edgeScale.minColor;
+                edgeScale.changeMaxColor(colorPicker1.getValue());
+                edgeScale.changeMinColor(colorPicker2.getValue());
+                nodeScale.changeMaxColor(edgeScale.maxColor);
+                nodeScale.changeMinColor(edgeScale.minColor);
                 nodeColor = colorPicker3.getValue();
                 pathColor = colorPicker4.getValue();
                 stageColorScale.close();
@@ -490,10 +490,12 @@ public class Kratka extends Application {
 
         });
 
-        Button indices = new Button("Display nodes indices");
+        CheckBox indices = new CheckBox("Display nodes indices");
         indices.setOnAction(e -> {
-            graph.displayNodesIndices(gc, 850, 600);
-                });
+            if (indices.isSelected()) {
+                graph.displayNodesIndices(gc, 850, 600);
+            }
+        });
         HBox bottomline = new HBox(600, changescale, indices);
         root.getChildren().add(bottomline);
 
