@@ -218,83 +218,85 @@ public class Graph {
     }
     public boolean bfs()
     {
-        boolean[] flag = new boolean[col*row];
-        PriorityQueue<Integer> queue = new PriorityQueue<Integer>();
+        boolean[] visited = new boolean[col*row];      //flaga o odwiedzeniu wierzchołka
+        PriorityQueue<Integer> queue = new PriorityQueue<Integer>();        //kolejka pryorytetowa, porównanie według numera
+        Arrays.fill(visited, false);
 
-        flag[0]=true;
+        visited[0]=true;       //zaczynamy od wierzchołka zerowego
         queue.add(0);
 
         int s;
         while (queue.size() != 0)
         {
-            s = queue.poll();
+            s = queue.poll();       //wyciągamy pierwszy wierzchołek w kolejce
 
             for (Edge edge : edges.get(s)) {
-                int n = edge.fin;
-                if (!flag[n]) {
-                    flag[n] = true;
-                    queue.add(n);
+                int n = edge.fin;       //szukamy wszystkich nieodwiedzonych sąsiadów wierzchołka
+                if (!visited[n]) {
+                    visited[n] = true;     //zaznaczamy jako odwiedzony
+                    queue.add(n);           //dodajemy do kolejki
                 }
             }
         }
-        for (int i = 0; i < (row*col); i++)
-            if(!flag[i])
+        for (int i = 0; i < (row*col); i++)     //jeżeli spotkamy wierzchołek nieodwiedzony, to graf nie jest spójny
+            if(!visited[i])
                 return false;
         return true;
     }
-    public static class NodeAndCost{
-        int node;
-        double cost;
+    public static class NodeAndCost{        //struktura do użycia w kolejce pryorytetowej w algorytmie Dijkstry
+        int node;       //numer wierzchołka
+        double cost;       //koszt dojścia
         public NodeAndCost(int n, double c){ node= n; cost = c;};
     }
-    public static class CostComparator implements Comparator<NodeAndCost>{
+    public static class CostComparator implements Comparator<NodeAndCost>{      //komparator dla kolejki, porównuje po koszcie dojścia
         @Override
         public int compare(NodeAndCost o1, NodeAndCost o2) {
             return Double.compare(o1.cost, o2.cost);
         }
     }
 
-    public static class NodesQueue extends java.util.ArrayList<NodeAndCost> {
-        public void updatenodes(int n, double cost){
+    public static class NodesQueue extends java.util.ArrayList<NodeAndCost> {       //kolejka, rozszerzająca ArrayListę
+        public void updatenodes(int n, double cost){        //metoda do aktualizacji rekordu w ścieżce
             for (NodeAndCost nodeAndCost : this){
-                if (nodeAndCost.node == n){
-                    nodeAndCost.cost = cost;
+                if (nodeAndCost.node == n){         //szukamy rekordu z wierzchołkiem, równym podanemu
+                    nodeAndCost.cost = cost;        //zmieniamy koszt dojścia
                     return;
                 }
             }
-            this.add(new NodeAndCost(n, cost));
+            this.add(new NodeAndCost(n, cost));         //jeśli rekorda nie ma - tworzymy
         }
     }
 
     public Path dijkstra(int st){
         boolean[] visited = new boolean[row*col];		//tabela, pokazująca, czy odpowiedni węzeł był odwiedzony
-        NodesQueue queue = new NodesQueue();
+        NodesQueue queue = new NodesQueue();        //kolejka
         double tmp;
         int iter = row * col;
-        double []cost = new double[iter];
-        int[] last = new int[iter];
-        Arrays.fill(visited, false);
-        Arrays.fill(cost, Double.POSITIVE_INFINITY);
-        Arrays.fill(last, -1);
-        cost[st] = 0;
+        double []cost = new double[iter];       //tabela kosztów
+        int[] last = new int[iter];             //tabela poprzedników
+        Arrays.fill(visited, false);        //wypełniamy odwiedzenia nieprawdami
+        Arrays.fill(cost, Double.POSITIVE_INFINITY);        //wypełniamy dojścia nieskończonościami
+        Arrays.fill(last, -1);                  //poprzedniki wypelniamy -1
+        cost[st] = 0;           //koszt dojścia do początkowego wierz. jest równy 0
 
-        queue.add(new NodeAndCost(st, 0));
+        queue.add(new NodeAndCost(st, 0));      //dodajemy początkowy wierzchołek do kolejki
         while (queue.size() != 0){
-            queue.sort(new CostComparator());
-            NodeAndCost node = queue.get(0);
-            queue.remove(0);
-            int i = node.node;
-            double l = node.cost;
-            if (!visited[i]){     //przypisujemy dojścia do sąsiadów
-                for (Edge edge : edges.get(i)) {
-                    int k = edge.fin;
-                    tmp = l + edge.weight;
-                    if (tmp < cost[k]) {
-                        cost[k] = tmp;
-                        last[k] = i;
-                        queue.updatenodes(k, tmp);
+            queue.sort(new CostComparator());       //sortujemy kolejkę według napisanego komparatora
+            NodeAndCost node = queue.get(0);        //pobieramy perwszy rekord w kolejce
+            queue.remove(0);            //usuwamy go z kolejki
+            int i = node.node;      //numer wierzchołka
+            double l = node.cost;       //koszt dojścia
+            if (!visited[i]){     //jeżeli nie odwiedzałyśmy jeszcze
+                for (Edge edge : edges.get(i)) {        //bierzemy sąsiadów
+                    int k = edge.fin;       //numer sąsiada
+                    tmp = l + edge.weight;      //koszt dojścia do sąsiada od wierzchołka obecnego
+                    if (tmp < cost[k]) {            //jeżeli mniejsze niż już przypisany koszt
+                        cost[k] = tmp;          //zmieniamy koszt
+                        last[k] = i;                //zmieniamy poprzednik
+                        queue.updatenodes(k, tmp);      //aktualizujemy rekord sąsiada w kolejce
                     }
                 }
+                visited[i] = true;      //wierzchołek odwiedzony
             }
         }
         return new Path(cost, last);

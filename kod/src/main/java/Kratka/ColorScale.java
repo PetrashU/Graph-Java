@@ -15,7 +15,7 @@ public class ColorScale {
     public Color maxColor = Color.RED;
 
     public ColorScale(){}
-    public void set(double min, double max){
+    public void set(double min, double max){        //metoda do ustawieniania wartości granicznych
         this.min = min;
         this.max = max;
     }
@@ -31,7 +31,7 @@ public class ColorScale {
     public void changeMinColor(Color min){this.minColor = min;}
 
     public void changeMaxColor(Color max){this.maxColor = max;}
-    public Color ColorOfValue (double value){
+    public Color ColorOfValue (double value){       //metoda wiciągająca kolor, odpowiadający wartości value
         if (value < min || value > max){
             return Color.BLACK;
         }
