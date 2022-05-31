@@ -13,6 +13,13 @@ public class Path {
         this.cost = cost;
         this.last = last;
     }
+    public int getStart(){
+        int i;
+        for (i = 0; i < last.length; i++)
+            if (last[i] == -1)
+                return i;
+        return i;
+    }
     public double getMaxCost(){
         if (cost.length == 0){
             return 0;

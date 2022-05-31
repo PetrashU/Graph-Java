@@ -46,7 +46,7 @@ public class Kratka extends Application {
     @Override
     public void start(Stage primarystage) throws Exception {
 
-        Label size = new Label("Size:");
+        Label size = new Label("Size:");            //Opis pól podawania rozmiaru grafu
         TextField textrow = new TextField();
         textrow.setMaxWidth(50);
         textrow.setText(String.valueOf(row));
@@ -56,7 +56,7 @@ public class Kratka extends Application {
         textcol.setText(String.valueOf(col));
         HBox sizebox = new HBox(5,textrow,sizex,textcol);
 
-        Label weight = new Label("Edge weight range:");
+        Label weight = new Label("Edge weight range:");         //Opis pól podawania zakresu losowanych wag
         TextField textweightlow = new TextField();
         textweightlow.setMaxWidth(50);
         textweightlow.setText(String.valueOf(minweight));
@@ -66,7 +66,7 @@ public class Kratka extends Application {
         textweighthigh.setText(String.valueOf(maxweight));
         HBox weightbox = new HBox(textweightlow,weightsymbol,textweighthigh);
 
-        Label con = new Label("Connectivity");
+        Label con = new Label("Connectivity");              //Opis wybioru opcji spójności grafu
         RadioButton connected = new RadioButton("Connected");
         connected.setSelected(true);
         RadioButton notconnected = new RadioButton("Not connected");
@@ -77,21 +77,22 @@ public class Kratka extends Application {
         randcon.setToggleGroup(connectivity);
         VBox connectbox = new VBox(connected,notconnected,randcon);
 
-        HBox firstline = new HBox(40, size,sizebox,weight,weightbox,con,connectbox);
+        HBox firstline = new HBox(40, size,sizebox,weight,weightbox,con,connectbox);        //pierwsza linijka
 
         FlowPane root = new FlowPane();
         root.setVgap(5);
         root.getChildren().add(firstline);
-        Label edgemin = new Label(String.valueOf(minweight));
-        Label edgemax = new Label(String.valueOf(maxweight));
+
+        Label edgemin = new Label(String.valueOf(minweight));               //Inicjalizowanie etykiet tekstowych dla mapy kolorowej
+        Label edgemax = new Label(String.valueOf(maxweight));                       //aby dalej można było ich zmieniać
         Label nodemin = new Label();
         Label nodemax = new Label();
 
 
-        Button generate = new Button("Generate");
+        Button generate = new Button("Generate");       //Generator
         generate.setOnAction(actionEvent -> {
             try {
-                String trow = textrow.getText();
+                String trow = textrow.getText();        //pobieramy dane z pól tekstowych i sprawdzamy poprawność
                 String tcol = textcol.getText();
                 row = Integer.parseInt(trow);
                 if (row <= 0 ){
@@ -140,12 +141,12 @@ public class Kratka extends Application {
                     textweighthigh.setStyle("");
                     return;
                 }
-                graph = null;
+                graph = null;       //jeżeli wszystkie pobrane dane poprawne, zmieniamy poprzednie dane, rysunki i teksty z etykiet
                 path = null;
                 nodelist.clear();
                 gc.setFill(Color.BLACK);
                 gc.fillRect(0,0,850,600);
-                graph = new Graph(row, col);
+                graph = new Graph(row, col);        //nowy graf
 
                 nodemax.setText("");
                 nodemin.setText("");
@@ -167,9 +168,9 @@ public class Kratka extends Application {
                     Random random = new Random();
                     connection = random.nextBoolean();
                 }
-                graph.generateGraph(connection);
+                graph.generateGraph(connection);        //generujemy graf zgodnie z podanymi parametrami
 
-                graph.drawGraph(gc, 850, 600, edgeScale, nodeColor);
+                graph.drawGraph(gc, 850, 600, edgeScale, nodeColor);        //rusujemy graf
             } catch (Exception e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
@@ -178,7 +179,7 @@ public class Kratka extends Application {
             }
         });
 
-        Button read = new Button("Read");
+        Button read = new Button("Read graph");       //Wczytywanie z pliku
         read.setOnAction(e ->{
             FileChooser filechooser = new FileChooser();
             filechooser.getExtensionFilters().addAll(new ExtensionFilter("txt file", "*.txt"));
@@ -186,22 +187,22 @@ public class Kratka extends Application {
             try {
                 if (readfile != null) {
                     BufferedReader r = new BufferedReader(new FileReader(readfile));
-                    graph = null;
+                    graph = null;           //usuwamy poprzednie dane
                     graph = new Graph();
                     path = null;
                     gc.setFill(Color.BLACK);
                     gc.fillRect(0, 0, 850, 600);
                     nodelist.clear();
-                    graph.readGraph(r);
+                    graph.readGraph(r);     //czytamy graf
                     r.close();
-                    if (graph.ErrorMassage != null) {
+                    if (graph.ErrorMassage != null) {       //jeżeli otrzymujemy błąd, to przekazujemy użytkownikowi i kończymy wczytywanie
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Error");
                         alert.setHeaderText(graph.ErrorMassage);
                         alert.showAndWait();
                         return;
                     }
-                    if (graph.WarningMassage != null) {
+                    if (graph.WarningMassage != null) {         //komunikaty o błędach poprawionych
                         for (int i = 0; i < graph.WarningMassage.size(); i++) {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("WARNING");
@@ -209,7 +210,7 @@ public class Kratka extends Application {
                             alert.showAndWait();
                         }
                     }
-                    row = graph.row;
+                    row = graph.row;        //zmieniamy dane w etykietach, polach i zmiennych
                     textrow.setText(String.valueOf(row));
                     col = graph.col;
                     textcol.setText(String.valueOf(col));
@@ -234,11 +235,93 @@ public class Kratka extends Application {
                     graph.drawGraph(gc,850,600, edgeScale, nodeColor);
                 }
             } catch (IOException ex) {
-                throw new RuntimeException(ex);
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(ex.getMessage());
+                alert.showAndWait();
             }
 
         });
         root.getChildren().add(read);
+
+        Button savegraph = new Button("Save graph");        //Zapisywanie grafu do pliku
+        savegraph.setOnAction(e ->{
+            FileChooser filechooser = new FileChooser();
+            filechooser.getExtensionFilters().addAll(new ExtensionFilter("txt file", "*.txt"));
+            File savefile = filechooser.showSaveDialog(primarystage);
+            try {
+                if (savefile != null) {
+                    PrintWriter w = new PrintWriter(savefile);
+                    graph.saveGraph(w);     //zapis
+                    w.close();
+                }
+            } catch (IOException ex) {      //komunikat o błędzie
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(ex.getMessage());
+                alert.showAndWait();
+            }
+        });
+
+
+        Button savepath = new Button("Save paths");
+
+        savepath.setOnAction(e ->{          //zapisanie wyznaczonych ścieżek
+            if (nodelist.size() == 0) {         //nie ma ścieżek
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Nie ma znalezionych scieżek do zapisania!");
+                alert.showAndWait();
+                return;
+            }
+            FileChooser filechooser = new FileChooser();
+            filechooser.getExtensionFilters().addAll(new ExtensionFilter("txt file", "*.txt"));
+            File savefile = filechooser.showSaveDialog(primarystage);
+            try {
+                if (savefile != null) {
+                    PrintWriter w = new PrintWriter(savefile);
+                    for (Integer integer : nodelist) {
+                        path.savePath(w, graph, integer);       //zapis ścieżki
+                    }
+                    w.close();
+                }
+            } catch (IOException ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(ex.getMessage());
+                alert.showAndWait();
+            }
+        });
+        Button clean = new Button("Clean paths");       //czyszczenie ścieżek
+        clean.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                clearPaths();
+                nodemin.setText("");
+                nodemax.setText("");
+            }
+        });
+        Button delete = new Button("Delete");           //usuwanie grafu
+
+        delete.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                graph = null;       //usuwamy graf i powiązane zmienne
+                path = null;
+                nodelist.clear();
+                gc.setFill(Color.BLACK);        //czyścimy rysunek
+                gc.fillRect(0, 0, 850, 600);
+                edgemax.setText("");
+                edgemin.setText("");
+                nodemin.setText("");
+                nodemax.setText("");
+
+            }
+        });
+
+        HBox secondline = new HBox(70, generate, read, savegraph, savepath, clean, delete);
+        root.getChildren().add(secondline);
+
 
         EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
             @Override
@@ -249,7 +332,7 @@ public class Kratka extends Application {
                 //wierzchołek startowy - wybór poprzez lewy przycisk myszy
                 if (mb == MouseButton.PRIMARY) {
                     //clearPaths();
-                    if (!graph.bfs()) {
+                    if (!graph.bfs()) {         //sprawdzamy spójność
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Error");
                         alert.setHeaderText("Graf nie jest spójny! Nie można użyć algorytmu Dijkstry");
@@ -267,32 +350,32 @@ public class Kratka extends Application {
                         }
                     }
                     path = new Path();
-                    path = graph.dijkstra(startNode);
+                    path = graph.dijkstra(startNode);       //używamy algorytmu Dijkstry
 
-                    double nodecostmin = path.getMinCost();
+                    double nodecostmin = path.getMinCost();     //zmieniamy powiązane dane i etykiety
                     double nodecostmax = path.getMaxCost();
 
                     nodemin.setText(String.valueOf(nodecostmin));
-                    nodemax.setText(String.valueOf(nodecostmax));
+                    nodemax.setText(String.format("%.2f",nodecostmax));
 
                     nodeScale.set(nodecostmin, nodecostmax);
 
-                    addColorNodes(850, 600, nodeScale);
-                    gc.setFill(pathColor);
+                    addColorNodes(850, 600, nodeScale);     //kolorujemy wierzchołki poprzez metodę
+                    gc.setFill(pathColor);              //odznaczamy zaznaczony wierzchołek kolorem
                     gc.fillOval(graph.nodeCoordinates[startNode][0], graph.nodeCoordinates[startNode][1], graph.getNodesSize(850,600), graph.getNodesSize(850,600));
 
 
                 }
                 //wierzchołek końcowy - wybór poprzez prawy przycisk myszy
                 else if (mb == MouseButton.SECONDARY) {
-                    if (path == null){
+                    if (path == null){      //poprzednio nie został użyty algorytm Dijkstry
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Error");
                         alert.setHeaderText("Nie został uruchomiomy algorytm Dijkstry! Proszę spoczątku kliknąć na początkowy wierzchołek PRAWYM klawiszem!");
                         alert.showAndWait();
                         return;
                     }
-                    double xr = me.getX();
+                    double xr = me.getX();      //pobieramy współrzędne kliknięcia i wyznaczamy odpowiadający wierzchołek
                     double yr = me.getY();
                     double sum = 1000;
                     for (int i=0; i<(graph.col * graph.row); i++) {
@@ -301,87 +384,14 @@ public class Kratka extends Application {
                             finishNode = i;
                         }
                     }
-                    gc.setFill(pathColor);
+                    gc.setFill(pathColor);      //odznaczamy wierzchołek
                     gc.fillOval(graph.nodeCoordinates[finishNode][0], graph.nodeCoordinates[finishNode][1], graph.getNodesSize(850,600), graph.getNodesSize(850,600));
-                    nodelist.add(finishNode);
-                    drawPath(finishNode, pathColor);
+                    nodelist.add(finishNode);       //dodajemy wierzchołek końcowy do listy
+                    drawPath(finishNode, pathColor);        //rysujemy ścieżkę
                 }
 
             }
         };
-
-
-        Button savegraph = new Button("Save graph");
-        savegraph.setOnAction(e ->{
-            FileChooser filechooser = new FileChooser();
-            filechooser.getExtensionFilters().addAll(new ExtensionFilter("txt file", "*.txt"));
-            File savefile = filechooser.showSaveDialog(primarystage);
-            try {
-                if (savefile != null) {
-                    PrintWriter w = new PrintWriter(savefile);
-                    graph.saveGraph(w);
-                    w.close();
-                }
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-
-
-        Button savepath = new Button("Save paths");
-
-        savepath.setOnAction(e ->{
-            if (nodelist.size() == 0) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("Nie ma znalezionych scieżek do zapisania!");
-                alert.showAndWait();
-                return;
-            }
-            FileChooser filechooser = new FileChooser();
-            filechooser.getExtensionFilters().addAll(new ExtensionFilter("txt file", "*.txt"));
-            File savefile = filechooser.showSaveDialog(primarystage);
-            try {
-                if (savefile != null) {
-                    PrintWriter w = new PrintWriter(savefile);
-                    for (Integer integer : nodelist) {
-                        path.savePath(w, graph, integer);
-                    }
-                    w.close();
-                }
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-        Button clean = new Button("Clean");
-        clean.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                clearPaths();
-                nodemin.setText("");
-                nodemax.setText("");
-            }
-        });
-        Button delete = new Button("Delete");
-
-        delete.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                graph = null;
-                path = null;
-                nodelist.clear();
-                gc.setFill(Color.BLACK);
-                gc.fillRect(0, 0, 850, 600);
-                edgemax.setText("");
-                edgemin.setText("");
-                nodemin.setText("");
-                nodemax.setText("");
-
-            }
-        });
-
-        HBox secondline = new HBox(70, generate, read, savegraph, savepath, clean, delete);
-        root.getChildren().add(secondline);
 
         Canvas canvas = new Canvas(850, 600);
         gc = canvas.getGraphicsContext2D();
@@ -389,8 +399,8 @@ public class Kratka extends Application {
         gc.fillRect(0, 0, 850, 600);
         canvas.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
 
-        Tooltip tooltip = new Tooltip();
-        tooltip.setStyle("-fx-font-size: 20");
+        Tooltip tooltip = new Tooltip();        //pokazywanie numeru wierzchołka po najechaniu na niego muszką
+        tooltip.setStyle("-fx-font-size: 15");
         Tooltip.install(canvas, tooltip);
         canvas.setOnMouseMoved(e ->{
             if (graph == null){
@@ -399,7 +409,7 @@ public class Kratka extends Application {
             int startNode = 0;
             double xl = e.getX();
             double yl = e.getY();
-            double sum = 1000; //zmienna pomocnicza, która na pewno będzie większa niż suma różnicy między współrzędnymi wierzchołka a kliknięcia
+            double sum = 1000;
             for (int i = 0; i < (graph.col * graph.row); i++) {
                 if (sum > Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl)) {
                     sum = Math.abs(graph.nodeCoordinates[i][0] - xl) + Math.abs(graph.nodeCoordinates[i][1] - yl);
@@ -415,8 +425,8 @@ public class Kratka extends Application {
         root.getChildren().add(canvas);
 
 
-        Label edgecolorlable = new Label("Edge color scale");
-        HBox colorfirst = new HBox(325, edgemin, edgecolorlable, edgemax);
+        Label edgecolorlable = new Label("Edge color scale");       //segment z mapą kolorów
+        HBox colorfirst = new HBox(350, edgemin, edgecolorlable, edgemax);
         root.getChildren().add(colorfirst);
 
         edgeScale.set(minweight, maxweight);
@@ -425,17 +435,14 @@ public class Kratka extends Application {
 
         root.getChildren().add(scaleimg);
 
-        double nodecostmin = 0.0;
-        double nodecostmax = 10.0;
-
-        nodemin.setText(String.valueOf(nodecostmin));
-        nodemax.setText(String.valueOf(nodecostmax));
+        nodemin.setText("");
+        nodemax.setText("");
         Label nodecolorlable = new Label("Node color scale");
-        HBox colorsecond = new HBox(325, nodemin, nodecolorlable, nodemax);
+        HBox colorsecond = new HBox(350, nodemin, nodecolorlable, nodemax);
         root.getChildren().add(colorsecond);
 
 
-        Button changescale = new Button("Modify color scale");
+        Button changescale = new Button("Modify color scale");      //Moduł zmiany kolorów mapy, wierzchołków i ścieżek
         changescale.setOnAction(e -> {
             ColorPicker colorPicker1 = new ColorPicker(); //color max weight edge
             colorPicker1.setValue(edgeScale.maxColor);
@@ -467,7 +474,7 @@ public class Kratka extends Application {
             stageColorScale.setWidth(250);
             stageColorScale.setHeight(450);
             Button action = new Button("OK");
-            action.setOnAction(k ->{
+            action.setOnAction(k ->{                //po zatwierdzeniu zmieniamy rysunek według istniejących danych
                 edgeScale.changeMaxColor(colorPicker1.getValue());
                 edgeScale.changeMinColor(colorPicker2.getValue());
                 nodeScale.changeMaxColor(edgeScale.maxColor);
@@ -480,10 +487,16 @@ public class Kratka extends Application {
                     gc.setFill(Color.BLACK);
                     gc.fillRect(0, 0, 850, 600);
                     graph.drawGraph(gc, 850,600, edgeScale, nodeColor);
-                    if (path != null)
+                    if (path != null){
                         addColorNodes(850,600,nodeScale);
+                        gc.setFill(pathColor);
+                        int startNode = path.getStart();
+                        gc.fillOval(graph.nodeCoordinates[startNode][0], graph.nodeCoordinates[startNode][1], graph.getNodesSize(850,600), graph.getNodesSize(850,600));}
                     if (nodelist.size() != 0) {
-                        for (Integer integer : nodelist) drawPath(integer, pathColor);
+                        for (Integer integer : nodelist){
+                            gc.setFill(pathColor);
+                            gc.fillOval(graph.nodeCoordinates[integer][0], graph.nodeCoordinates[integer][1], graph.getNodesSize(850,600), graph.getNodesSize(850,600));
+                            drawPath(integer, pathColor);}
                     }
                 }
             });
@@ -495,7 +508,7 @@ public class Kratka extends Application {
 
         });
 
-        CheckBox indices = new CheckBox("Display nodes indices");
+        CheckBox indices = new CheckBox("Display nodes indices");       //Opcja pokazywania numerów wewnątrz wierzchąłków
         indices.setOnAction(e -> {
             if (indices.isSelected()) {
                 graph.displayNodesIndices(gc, 850, 600);
@@ -511,32 +524,32 @@ public class Kratka extends Application {
         primarystage.show();
     }
 
-    public void addColorNodes(int width, int height, ColorScale scale) {
+    public void addColorNodes(int width, int height, ColorScale scale) {        //metoda dodawania kolorów do wierzchołków
         for (int i=0; i<row; i++){
             for (int j=0; j<col; j++){
-                gc.setFill(scale.ColorOfValue(path.cost[i * graph.col + j]));
+                gc.setFill(scale.ColorOfValue(path.cost[i * graph.col + j]));       //rysujemy wierzchołki kolorem, odpowiadającym kosztu dojścia
                 gc.fillOval(graph.nodeCoordinates[i*col + j][0], graph.nodeCoordinates[i*col + j][1], graph.getNodesSize(width,height), graph.getNodesSize(width,height));
             }
         }
     }
-    public void drawPath(int finishNode, Color color){
+    public void drawPath(int finishNode, Color color){      //rysowanie ścieżki
         double nodeSize = graph.getNodesSize(850,600);
         gc.setStroke(color);
         gc.setLineWidth(nodeSize/2);
         int sEdge = finishNode;
         int fEdge = path.last[sEdge];
-        while (fEdge != -1){
+        while (fEdge != -1){        //schodzimy od wierzchołka końcowego do początkowego
             gc.strokeLine(graph.nodeCoordinates[sEdge][0] + nodeSize/2, graph.nodeCoordinates[sEdge][1] + nodeSize/2,
                     graph.nodeCoordinates[fEdge][0] + nodeSize/2, graph.nodeCoordinates[fEdge][1] + nodeSize/2);
             sEdge = fEdge;
             fEdge = path.last[fEdge];
         }
     }
-    public void clearPaths(){
-        gc.setFill(Color.BLACK);
+    public void clearPaths(){       //czyszczenie ścieżek
+        gc.setFill(Color.BLACK);        //usuwamy rysunek
         gc.fillRect(0, 0, 850, 600);
-        graph.drawGraph(gc, 850, 600, edgeScale, nodeColor);
-        path = null;
+        graph.drawGraph(gc, 850, 600, edgeScale, nodeColor);       //rysujemy graf
+        path = null;        //usuwamy powiązane dane
         nodelist.clear();
     }
 
