@@ -40,7 +40,8 @@ public class Kratka extends Application {
     public Color pathColor = Color.WHITE;
     public ColorScale edgeScale = new ColorScale();
     public ColorScale nodeScale = new ColorScale();
-    public ArrayList<Integer> nodelist = new ArrayList<>();     //lista wierzchołków końcowych
+    public ArrayList<ArrayList<Integer>> nodelist = new ArrayList<ArrayList<Integer>>();     //lista wierzchołków końcowych
+    public ArrayList<Path> paths = new ArrayList<Path>();
 
 
     @Override
@@ -144,6 +145,7 @@ public class Kratka extends Application {
                 graph = null;       //jeżeli wszystkie pobrane dane poprawne, zmieniamy poprzednie dane, rysunki i teksty z etykiet
                 path = null;
                 nodelist.clear();
+                paths.clear();
                 gc.setFill(Color.BLACK);
                 gc.fillRect(0,0,850,600);
                 graph = new Graph(row, col);        //nowy graf
@@ -193,6 +195,7 @@ public class Kratka extends Application {
                     gc.setFill(Color.BLACK);
                     gc.fillRect(0, 0, 850, 600);
                     nodelist.clear();
+                    paths.clear();
                     graph.readGraph(r);     //czytamy graf
                     r.close();
                     if (graph.ErrorMassage != null) {       //jeżeli otrzymujemy błąd, to przekazujemy użytkownikowi i kończymy wczytywanie
@@ -245,6 +248,7 @@ public class Kratka extends Application {
         root.getChildren().add(read);
 
         Button savegraph = new Button("Save graph");        //Zapisywanie grafu do pliku
+
         savegraph.setOnAction(e ->{
             FileChooser filechooser = new FileChooser();
             filechooser.getExtensionFilters().addAll(new ExtensionFilter("txt file", "*.txt"));
@@ -280,8 +284,10 @@ public class Kratka extends Application {
             try {
                 if (savefile != null) {
                     PrintWriter w = new PrintWriter(savefile);
-                    for (Integer integer : nodelist) {
-                        path.savePath(w, graph, integer);       //zapis ścieżki
+                    for (Path p : paths) { //iteruję po wszystkich ścieżkach
+                        for (int i=0; i<nodelist.get(paths.indexOf(p)).size(); i++) { //każda ze ścieżek może mieć kilka wierzchołków końcowych
+                            p.savePath(w, graph, nodelist.get(paths.indexOf(p)).get(i));
+                        }
                     }
                     w.close();
                 }
@@ -309,6 +315,7 @@ public class Kratka extends Application {
                 graph = null;       //usuwamy graf i powiązane zmienne
                 path = null;
                 nodelist.clear();
+                paths.clear();
                 gc.setFill(Color.BLACK);        //czyścimy rysunek
                 gc.fillRect(0, 0, 850, 600);
                 edgemax.setText("");
@@ -351,6 +358,8 @@ public class Kratka extends Application {
                     }
                     path = new Path();
                     path = graph.dijkstra(startNode);       //używamy algorytmu Dijkstry
+                    paths.add(path);
+                    nodelist.add(new ArrayList<Integer>());
 
                     double nodecostmin = path.getMinCost();     //zmieniamy powiązane dane i etykiety
                     double nodecostmax = path.getMaxCost();
@@ -386,7 +395,11 @@ public class Kratka extends Application {
                     }
                     gc.setFill(pathColor);      //odznaczamy wierzchołek
                     gc.fillOval(graph.nodeCoordinates[finishNode][0], graph.nodeCoordinates[finishNode][1], graph.getNodesSize(850,600), graph.getNodesSize(850,600));
-                    nodelist.add(finishNode);       //dodajemy wierzchołek końcowy do listy
+                    nodelist.get(paths.indexOf(path)).add(finishNode);
+                    /*
+                    for (int i=0; i < nodelist.get(paths.indexOf(path)).size(); i++)
+                        System.out.println(nodelist.get(paths.indexOf(path)).get(i));
+                     */
                     drawPath(finishNode, pathColor);        //rysujemy ścieżkę
                 }
 
@@ -487,16 +500,25 @@ public class Kratka extends Application {
                     gc.setFill(Color.BLACK);
                     gc.fillRect(0, 0, 850, 600);
                     graph.drawGraph(gc, 850,600, edgeScale, nodeColor);
-                    if (path != null){
-                        addColorNodes(850,600,nodeScale);
-                        gc.setFill(pathColor);
+                    if (path != null) {
+                        addColorNodes(850, 600, nodeScale);
+                        /*gc.setFill(pathColor);
                         int startNode = path.getStart();
                         gc.fillOval(graph.nodeCoordinates[startNode][0], graph.nodeCoordinates[startNode][1], graph.getNodesSize(850,600), graph.getNodesSize(850,600));}
                     if (nodelist.size() != 0) {
                         for (Integer integer : nodelist){
                             gc.setFill(pathColor);
                             gc.fillOval(graph.nodeCoordinates[integer][0], graph.nodeCoordinates[integer][1], graph.getNodesSize(850,600), graph.getNodesSize(850,600));
-                            drawPath(integer, pathColor);}
+                            drawPath(integer, pathColor);}*/
+
+                        if ((paths.size() != 0) && (nodelist.size() != 0)) {
+                            for (Path p : paths) {
+                                path = p;
+                                for (int i = 0; i < nodelist.get(paths.indexOf(p)).size(); i++) {
+                                    drawPath(nodelist.get(paths.indexOf(p)).get(i), pathColor);
+                                }
+                            }
+                        }
                     }
                 }
             });
@@ -551,6 +573,7 @@ public class Kratka extends Application {
         graph.drawGraph(gc, 850, 600, edgeScale, nodeColor);       //rysujemy graf
         path = null;        //usuwamy powiązane dane
         nodelist.clear();
+        paths.clear();
     }
 
     public static void main(String[] args) {
