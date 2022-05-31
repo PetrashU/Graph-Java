@@ -21,7 +21,7 @@ public class Graph {
     public double minWeight;
     public double maxWeight;
     public String ErrorMassage;
-    public ArrayList<String> WarningMassage;
+    public ArrayList<String> WarningMassage = new ArrayList<>();
     public double[][] nodeCoordinates;
 
 
@@ -156,10 +156,11 @@ public class Graph {
             }
         }
     }
-    public void readGraph(BufferedReader r) throws IOException {    //trzeba dodać obsługę błędów
+    public void readGraph(BufferedReader r) {    //trzeba dodać obsługę błędów
         try {
             int index;
             int lineNumber = 0;
+            boolean flag = false;
             String line = r.readLine();
             Scanner scanner = new Scanner(line);
             row = scanner.nextInt();
@@ -170,22 +171,30 @@ public class Graph {
                 edges.put(i, new ArrayList<Edge>());
             nodeCoordinates = new double[iter][2];
             while ((line = r.readLine()) != null) {
-                //mam linię w postaci stringu - mogę teraz na niej operować
-                line = line.trim();
-                String[] data = line.split("[\\s:]+");
-                //data to tablica danych w postaci stringów z jednej linii
-                for (int i=0; i< data.length; i+=2){
-                    index = Integer.parseInt(data[i]);
-                    Edge tmp = new Edge();
-                    tmp.fin = index;
-                    tmp.weight = Double.parseDouble(data[i+1]);
-                    edges.get(lineNumber).add(tmp);
+                    //mam linię w postaci stringu - mogę teraz na niej operować
+                    line = line.trim();
+                    String[] data = line.split("[\\s:]+");
+                    //data to tablica danych w postaci stringów z jednej linii
+                    for (int i = 0; i < data.length; i += 2) {
+                        index = Integer.parseInt(data[i]);
+                        Edge tmp = new Edge();
+                        tmp.fin = index;
+                        tmp.weight = Double.parseDouble(data[i + 1]);
+                        if (tmp.weight < 0) {
+                            tmp.weight = Math.abs(tmp.weight);
+                            System.out.println(tmp.weight);
+                            flag = true;
+                        }
+                        edges.get(lineNumber).add(tmp);
+                    }
+                    lineNumber++;
                 }
-                lineNumber++;
+            if (flag){
+                WarningMassage.add("Wystąpiła ujemna waga w grafie. Waga została zamieniona na jej wartość bezwzględną.");
             }
         }
-        catch(IOException ioe){
-            ErrorMassage = ioe.getMessage();
+        catch(IOException e){
+            ErrorMassage = "Nieprawidłowy format grafu.";
         }
     }
 
