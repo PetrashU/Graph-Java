@@ -40,7 +40,8 @@ public class Kratka extends Application {
     public Color pathColor = Color.WHITE;
     public ColorScale edgeScale = new ColorScale();
     public ColorScale nodeScale = new ColorScale();
-    public ArrayList<Integer> nodelist = new ArrayList<>();     //lista wierzchołków końcowych
+    public ArrayList<ArrayList<Integer>> nodelist = new ArrayList<ArrayList<Integer>>();     //lista wierzchołków końcowych
+    public ArrayList<Path> paths = new ArrayList<Path>();
 
 
     @Override
@@ -143,6 +144,7 @@ public class Kratka extends Application {
                 graph = null;
                 path = null;
                 nodelist.clear();
+                paths.clear();
                 gc.setFill(Color.BLACK);
                 gc.fillRect(0,0,850,600);
                 graph = new Graph(row, col);
@@ -192,6 +194,7 @@ public class Kratka extends Application {
                     gc.setFill(Color.BLACK);
                     gc.fillRect(0, 0, 850, 600);
                     nodelist.clear();
+                    paths.clear();
                     graph.readGraph(r);
                     r.close();
                     if (graph.ErrorMassage != null) {
@@ -268,6 +271,8 @@ public class Kratka extends Application {
                     }
                     path = new Path();
                     path = graph.dijkstra(startNode);
+                    paths.add(path);
+                    nodelist.add(new ArrayList<Integer>());
 
                     double nodecostmin = path.getMinCost();
                     double nodecostmax = path.getMaxCost();
@@ -303,7 +308,11 @@ public class Kratka extends Application {
                     }
                     gc.setFill(pathColor);
                     gc.fillOval(graph.nodeCoordinates[finishNode][0], graph.nodeCoordinates[finishNode][1], graph.getNodesSize(850,600), graph.getNodesSize(850,600));
-                    nodelist.add(finishNode);
+                    nodelist.get(paths.indexOf(path)).add(finishNode);
+                    /*
+                    for (int i=0; i < nodelist.get(paths.indexOf(path)).size(); i++)
+                        System.out.println(nodelist.get(paths.indexOf(path)).get(i));
+                     */
                     drawPath(finishNode, pathColor);
                 }
 
@@ -344,8 +353,10 @@ public class Kratka extends Application {
             try {
                 if (savefile != null) {
                     PrintWriter w = new PrintWriter(savefile);
-                    for (Integer integer : nodelist) {
-                        path.savePath(w, graph, integer);
+                    for (Path p : paths) { //iteruję po wszystkich ścieżkach
+                        for (int i=0; i<nodelist.get(paths.indexOf(p)).size(); i++) { //każda ze ścieżek może mieć kilka wierzchołków końcowych
+                            p.savePath(w, graph, nodelist.get(paths.indexOf(p)).get(i));
+                        }
                     }
                     w.close();
                 }
@@ -370,6 +381,7 @@ public class Kratka extends Application {
                 graph = null;
                 path = null;
                 nodelist.clear();
+                paths.clear();
                 gc.setFill(Color.BLACK);
                 gc.fillRect(0, 0, 850, 600);
                 edgemax.setText("");
@@ -482,8 +494,13 @@ public class Kratka extends Application {
                     graph.drawGraph(gc, 850,600, edgeScale, nodeColor);
                     if (path != null)
                         addColorNodes(850,600,nodeScale);
-                    if (nodelist.size() != 0) {
-                        for (Integer integer : nodelist) drawPath(integer, pathColor);
+                    if ((paths.size() != 0) && (nodelist.size() != 0)) {
+                        for (Path p : paths) {
+                            path = p;
+                            for (int i = 0; i < nodelist.get(paths.indexOf(p)).size(); i++) {
+                                drawPath(nodelist.get(paths.indexOf(p)).get(i), pathColor);
+                            }
+                        }
                     }
                 }
             });
@@ -538,6 +555,7 @@ public class Kratka extends Application {
         graph.drawGraph(gc, 850, 600, edgeScale, nodeColor);
         path = null;
         nodelist.clear();
+        paths.clear();
     }
 
     public static void main(String[] args) {
