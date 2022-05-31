@@ -248,7 +248,7 @@ public class Kratka extends Application {
                 int finishNode = graph.row * graph.col - 1;
                 //wierzchołek startowy - wybór poprzez lewy przycisk myszy
                 if (mb == MouseButton.PRIMARY) {
-                    clearPaths();
+                    //clearPaths();
                     if (!graph.bfs()) {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Error");
@@ -278,6 +278,9 @@ public class Kratka extends Application {
                     nodeScale.set(nodecostmin, nodecostmax);
 
                     addColorNodes(850, 600, nodeScale);
+                    gc.setFill(pathColor);
+                    gc.fillOval(graph.nodeCoordinates[startNode][0], graph.nodeCoordinates[startNode][1], graph.getNodesSize(850,600), graph.getNodesSize(850,600));
+
 
                 }
                 //wierzchołek końcowy - wybór poprzez prawy przycisk myszy
@@ -298,6 +301,8 @@ public class Kratka extends Application {
                             finishNode = i;
                         }
                     }
+                    gc.setFill(pathColor);
+                    gc.fillOval(graph.nodeCoordinates[finishNode][0], graph.nodeCoordinates[finishNode][1], graph.getNodesSize(850,600), graph.getNodesSize(850,600));
                     nodelist.add(finishNode);
                     drawPath(finishNode, pathColor);
                 }
