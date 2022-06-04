@@ -67,9 +67,13 @@ public class Graph {
     }
 
     public double getNodesSize(int width, int height){
+        //skalowanie wierzchołków i krawędzi;
+        //długość krawędzi maleje nieliniowo (znacznie szybciej niż rozmiar wierzchołków)
+        //wraz ze zwiększeniem rozmiaru grafu
         double scalar = 3;
         double nodeSize = 30;
         double edgeSize = scalar * nodeSize;
+        //gdy graf się nie mieści w oknie to zmnijeszone zostają wierzchołki i krawędzie
         while ((col+1)*edgeSize > width || (row+1)*edgeSize > height){
             if (nodeSize <= 2 || scalar <= 0.5){
                 break;
@@ -85,7 +89,7 @@ public class Graph {
         gc.setFill(nodeColor);
         double nodeSize = getNodesSize(width, height);
         double num = (30 - nodeSize)*2;
-        double scalar = 3 - 0.03*num;
+        double scalar = 3 - 0.03*num; //obliczenia w celu uzyskania edgeSize korzystając z nodeSize zwróconego przez funkcję
         double edgeSize = scalar * nodeSize;
         int iter = row * col;
         gc.setLineWidth(nodeSize/4);
@@ -98,6 +102,7 @@ public class Graph {
                 nodeCoordinates[i*col + j][1] = ynode + i * edgeSize;
             }
         }
+        //rysowanie krawędzi
         for (int i=0; i<iter; i++){
             for (Edge edge : edges.get(i)){
                 int j = edge.fin;
@@ -105,12 +110,13 @@ public class Graph {
                 gc.strokeLine(nodeCoordinates[i][0]+nodeSize/2, nodeCoordinates[i][1]+nodeSize/2, nodeCoordinates[j][0]+nodeSize/2, nodeCoordinates[j][1]+nodeSize/2);
             }
         }
+        //rysowanie wierzchołków
         for (int i=0; i<row; i++){
             for (int j=0; j<col; j++){
                 gc.fillOval(nodeCoordinates[i*col + j][0], nodeCoordinates[i*col + j][1], nodeSize, nodeSize);
             }
         }
-
+        //oddzielne pętle są tylko po to, żeby wstawiane wierzchołki i krawędzie się na siebie nie nawarstwiały
     }
     public void displayNodesIndices(GraphicsContext gc, int width, int height){
         gc.setLineWidth(1);
@@ -137,11 +143,13 @@ public class Graph {
         ArrayList<Edge> list = new ArrayList<>();
         for (int i = 0; i < iter; i++) {
             for (int j = i; j < iter; j++) {
+                //warunki na istnienie połączenia
                 condition1 = (j == i + 1 && ((i + 1) % col != 0));
                 condition2 = (j == i - 1 && ((i % col) != 0));
                 condition3 = (j == i - col && i >= col);
                 condition4 = (j == i + col && i < iter - col);
                 if (condition1 || condition2 || condition3 || condition4) {
+                    //jeżeli graf jest spójny to wstawiane są wszystkie krawędzie, a jeśli nie, to tylko połowa
                     if (connect || random.nextDouble(1) > 0.5) {
                         Edge tmp = new Edge();
                         Edge tmp1 = new Edge();
@@ -156,11 +164,11 @@ public class Graph {
             }
         }
     }
-    public void readGraph(BufferedReader r) {    //trzeba dodać obsługę błędów
+    public void readGraph(BufferedReader r) {
         try {
             int index;
             int lineNumber = 0;
-            boolean flag = false;
+            boolean flag = false; //flaga służąca do zarejestrowania czy wystąpiła ujemna waga w grafie
             String line = r.readLine();
             Scanner scanner = new Scanner(line);
             row = scanner.nextInt();
@@ -171,9 +179,14 @@ public class Graph {
                 edges.put(i, new ArrayList<Edge>());
             nodeCoordinates = new double[iter][2];
             while ((line = r.readLine()) != null) {
-                //mam linię w postaci stringu - mogę teraz na niej operować
+                //mam linię w postaci stringa - mogę teraz na niej operować
                 line = line.trim();
+                if (line.isBlank()){ //linia pusta oznaczająca że wierzchołek nie ma żadnych krawędzi (graf niespójny)
+                    lineNumber++;
+                    continue;
+                }
                 String[] data = line.split("[\\s:]+");
+
                 //data to tablica danych w postaci stringów z jednej linii
                 for (int i = 0; i < data.length; i += 2) {
                     index = Integer.parseInt(data[i]);
@@ -196,7 +209,7 @@ public class Graph {
             ErrorMassage = "Nieprawidłowy format grafu.";
         }
         catch(Exception exception){
-            ErrorMassage = "Nieprawidłowy format grafu.";
+           ErrorMassage = "Nieprawidłowy format grafu.";
         }
     }
 
@@ -208,7 +221,7 @@ public class Graph {
             flag = true;
             for (Edge edge : edges.get(i)){
                 if (flag){
-                    w.print("\t");
+                    w.print("\t"); //jednokrotne wypisanie tabulatora w każdej z linii
                     flag = false;
                 }
                 w.print("  " + edge.fin + " :" + edge.weight);
@@ -219,7 +232,7 @@ public class Graph {
     public boolean bfs()
     {
         boolean[] visited = new boolean[col*row];      //flaga o odwiedzeniu wierzchołka
-        PriorityQueue<Integer> queue = new PriorityQueue<Integer>();        //kolejka pryorytetowa, porównanie według numera
+        PriorityQueue<Integer> queue = new PriorityQueue<Integer>();        //kolejka priorytetowa, porównanie według numera
         Arrays.fill(visited, false);
 
         visited[0]=true;       //zaczynamy od wierzchołka zerowego
