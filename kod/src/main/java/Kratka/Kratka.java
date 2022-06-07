@@ -89,6 +89,22 @@ public class Kratka extends Application {
         Label nodemin = new Label();
         Label nodemax = new Label();
 
+        CheckBox indices = new CheckBox("Display nodes indices");       //Opcja pokazywania numerów wewnątrz wierzchołków
+        indices.setOnAction(e -> {
+            if (indices.isSelected()) {
+                graph.displayNodesIndices(gc, 850, 600);
+            }
+            else {
+                if (this.path != null)
+                addColorNodes(850, 600, nodeScale);     //kolorujemy wierzchołki poprzez metodę
+                else
+                    for (int i=0; i<row; i++){
+                        for (int j=0; j<col; j++){
+                            gc.fillOval(graph.nodeCoordinates[i*col + j][0], graph.nodeCoordinates[i*col + j][1], graph.getNodesSize(850,600), graph.getNodesSize(850,600));
+                        }
+                    }
+            }
+        });
 
         Button generate = new Button("Generate");       //Generator
         generate.setOnAction(actionEvent -> {
@@ -173,6 +189,9 @@ public class Kratka extends Application {
                 graph.generateGraph(connection);        //generujemy graf zgodnie z podanymi parametrami
 
                 graph.drawGraph(gc, 850, 600, edgeScale, nodeColor);        //rusujemy graf
+                if (indices.isSelected()) {
+                    graph.displayNodesIndices(gc, 850, 600);
+                }
             } catch (Exception e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
@@ -236,6 +255,9 @@ public class Kratka extends Application {
                     else
                         notconnected.setSelected(true);
                     graph.drawGraph(gc,850,600, edgeScale, nodeColor);
+                    if (indices.isSelected()) {
+                        graph.displayNodesIndices(gc, 850, 600);
+                    }
                 }
             } catch (IOException ex) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -303,6 +325,9 @@ public class Kratka extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 clearPaths();
+                if (indices.isSelected()) {
+                    graph.displayNodesIndices(gc, 850, 600);
+                }
                 nodemin.setText("");
                 nodemax.setText("");
             }
@@ -370,6 +395,9 @@ public class Kratka extends Application {
                     nodeScale.set(nodecostmin, nodecostmax);
 
                     addColorNodes(850, 600, nodeScale);     //kolorujemy wierzchołki poprzez metodę
+                    if (indices.isSelected()) {
+                        graph.displayNodesIndices(gc, 850, 600);
+                    }
                     gc.setFill(pathColor);              //odznaczamy zaznaczony wierzchołek kolorem
                     gc.fillOval(graph.nodeCoordinates[startNode][0], graph.nodeCoordinates[startNode][1], graph.getNodesSize(850,600), graph.getNodesSize(850,600));
 
@@ -380,7 +408,7 @@ public class Kratka extends Application {
                     if (path == null){      //poprzednio nie został użyty algorytm Dijkstry
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Error");
-                        alert.setHeaderText("Nie został uruchomiomy algorytm Dijkstry! Proszę spoczątku kliknąć na początkowy wierzchołek PRAWYM klawiszem!");
+                        alert.setHeaderText("Nie został uruchomiomy algorytm Dijkstry! Proszę na początku kliknąć na początkowy wierzchołek LEWYM klawiszem!");
                         alert.showAndWait();
                         return;
                     }
@@ -520,6 +548,9 @@ public class Kratka extends Application {
                             }
                         }
                     }
+                    if (indices.isSelected()) {
+                        graph.displayNodesIndices(gc, 850, 600);
+                    }
                 }
             });
             chooseColors.getChildren().add(action);
@@ -528,13 +559,6 @@ public class Kratka extends Application {
             stageColorScale.setResizable(false);
             stageColorScale.show();
 
-        });
-
-        CheckBox indices = new CheckBox("Display nodes indices");       //Opcja pokazywania numerów wewnątrz wierzchąłków
-        indices.setOnAction(e -> {
-            if (indices.isSelected()) {
-                graph.displayNodesIndices(gc, 850, 600);
-            }
         });
         HBox bottomline = new HBox(600, changescale, indices);
         root.getChildren().add(bottomline);
