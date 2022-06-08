@@ -359,6 +359,8 @@ public class Kratka extends Application {
             @Override
             public void handle(MouseEvent me) {
                 MouseButton mb = me.getButton();
+                if (graph == null)
+                    return;
                 int startNode = 0;
                 int finishNode = graph.row * graph.col - 1;
                 //wierzchołek startowy - wybór poprzez lewy przycisk myszy
