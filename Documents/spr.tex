@@ -102,9 +102,9 @@ Długości przy węźle początkowym otrzymują wartość 0. Długość ścieżk
   Poprzedni krok jest powtarzany aż do odwiedzenia wszystkich węzłów. Ostatecznie każdy węzeł (w tym wybrany jako końcowy) ma przypisaną długość najkrótszej ścieżki od węzła początkowego. Zapamiętana ścieżka może zostać wypisana na ekran.
 \end{itemize}
 
-\section{Opis wywołania}\label{header-n233}
-
-Interakcja pomiędzy użytkownikiem a program odbywa się za pomocą interfejsu graficznego.
+\section{Opis wywołania i wygląd interfejsu}\label{header-n233}
+W celu uruchomienia programu należy pobrać pliki źródłowe zachowując pierwotną strukturę podziału plików. Program należy skompilować i uruchomić np. przez środowisko IntelliJ IDEA.
+Dalsza interakcja pomiędzy użytkownikiem a programem odbywa się za pomocą interfejsu graficznego.
 
 \begin{figure}[H]
 \begin{center}
@@ -142,7 +142,7 @@ W górnym panelu znajdują się pola tekstowe, pozwalające wprowadzić pożąda
 \begin{itemize}
     \item Generate
     
-    Przycisk wczyta podane przez użytkownika w polach testowych i polu wyboru dane, sprawdzi je i wygeneruje odpowiedni graf. W przypadku, gdy poprzednio już został wygenerowany/wczytany graf lub wyliczona ścieżka, poprzednie dane zostaną usunięte.
+    Przycisk wczyta podane przez użytkownika w polach tekstowych i polu wyboru dane, sprawdzi je i wygeneruje odpowiedni graf. W przypadku, gdy poprzednio już został wygenerowany/wczytany graf lub wyliczona ścieżka, poprzednie dane zostaną usunięte.
     
     \item Read graph
     
@@ -150,13 +150,13 @@ W górnym panelu znajdują się pola tekstowe, pozwalające wprowadzić pożąda
     
     \item Save graph
     
-    Przycisk uruchomi okno wyboru ścieżki do utworzenia pliku i zapisanie do niego grafu w postaci tekstowej. Nie spowoduje usunięcie żadnych danych.
+    Przycisk uruchomi okno wyboru ścieżki do utworzenia pliku i zapisanie do niego grafu w postaci tekstowej. Nie spowoduje usunięcia żadnych danych.
     \item Save paths
     
-    Przycisk uruchomi okno wyboru ścieżki do utworzenia pliku i zapisanie do niego wszystkich wyznaczonych na rysunku ścieżek w postaci tekstowej. Nie spowoduje usunięcie żadnych danych.
+    Przycisk uruchomi okno wyboru ścieżki do utworzenia pliku i zapisanie do niego wszystkich wyznaczonych na rysunku ścieżek w postaci tekstowej. Nie spowoduje usunięcia żadnych danych.
     \item Clean paths
     
-    Przycisk uruchomi wyczyszczenie wszystkich wyliczonych ścieżek i kosztów dojścia. Lecz nie spowoduje usunięcie grafu.
+    Przycisk uruchomi wyczyszczenie wszystkich wyliczonych ścieżek i kosztów dojścia. Lecz nie spowoduje usunięcia grafu.
     \item Delete
     
     Przycisk spowoduje usunięcie wszystkich poprzednio wyliczonych danych, w tym grafu, kosztów i ścieżek.
@@ -164,13 +164,28 @@ W górnym panelu znajdują się pola tekstowe, pozwalające wprowadzić pożąda
 
 
 Większą część okna zajmuje pole do wyświetlania grafu w postaci graficznej. 
+Interakcja z programem jest możliwa nie tylko poprzez przyciski, ale również poprzez poniższe akcje dostępne na tym polu.
+\begin{itemize}
 
-\textbf{Najechanie myszką} na wierzchołek spowoduje pokazanie jego numeru. \textbf{Kliknięcie lewym klawiszem} myszki w okolicy wybranego wierzchołka spowoduje uruchomienie się algorytmu Dijkstry i zaznaczenie odległości do każdego innego wierzchołka. \textbf{Kliknięcie prawym klawiszem myszki} w okolicy innego wierzchołka spowoduje wyliczenie i narysowanie najkrótszej ścieżki do tego wierzchołka od wierzchołka, poprzednio wybranego za pomocą lewego klawisza.
+\item
+\textbf{Najechanie myszką} na wierzchołek spowoduje pokazanie jego indeksu.
+\item
+\textbf{Kliknięcie lewym klawiszem} myszki w okolicy wybranego wierzchołka spowoduje uruchomienie się algorytmu Dijkstry i przypisanie kolorów do każdego z pozostałych wierzchołków. Kolory odzwierciedlają odległość od wybranego wierzchołka do innych wierzchołków. Dany wierzchołek zostaje również oznaczony jako wierzchołek startowy w celu późniejszego wyboru ścieżki.
+\item
+\textbf{Kliknięcie prawym klawiszem myszki} w okolicy innego wierzchołka spowoduje wyliczenie i narysowanie najkrótszej ścieżki do tego wierzchołka od wierzchołka poprzednio wybranego za pomocą lewego klawisza. Możliwe jest wielokrotne wybieranie końcowych wierzchołków; ścieżki będą rysowane od pierwotnie wybranego wierzchołka startowego.
 
-Program pozwala na wyliczenie ścieżek od różnych wierzchołków. Dla tego po wyliczeniu ścieżki od jednego wierzchołka do drugiego, należy znowu wybrać wierzchołek początkowy za pomocą lewego klawisza i wierzchołek końcowy za pomocą prawego klawisza. Obie ścieżki będą się pokazywały i można będzie zapisać je do pliku.
+\end{itemize}
+
+Program pozwala na wyliczenie wielu ścieżek od różnych wierzchołków. W tym celu po wyliczeniu ścieżki od jednego wierzchołka do drugiego, należy znowu wybrać wierzchołek początkowy za pomocą lewego klawisza i wierzchołek końcowy za pomocą prawego klawisza. Wszystkie ścieżki będą jednocześnie widoczne na ekranie aż do momentu ich wyczyszczenia i można będzie zapisać je do pliku.
 
 Dolną część okienka zajmuje mapa kolorów z odpowiadającymi przedziałami wag krawędzi i kosztów dojścia. Przedziały będą się dynamicznie zmieniać wraz ze zmianą danych.
-Pod mapą znajduje się przycisk "Modify color scale", uruchamiający okienko wyboru kolorów wartości minimalnych i maksymalnych dla mapy, koloru wierzchołków i koloru ścieżki, i opcja "Display nodes indices", uruchamiająca pokazanie numerów wierzchołków wewnątrz wierzchołków. 
+Pod mapą znajdują się dwa dodatkowe przyciski akcji: 
+\begin{itemize}
+    \item 
+przycisk \textbf {Modify color scale}, uruchamiający okienko wyboru kolorów wartości minimalnych i maksymalnych dla mapy, koloru wierzchołków i koloru ścieżki. Po zaakceptowaniu zmian kolorów używanych do rysowania grafu, graf i pasek obrazujący skalę kolorów zostają od razu zaktualizowane.
+\item
+checkbox \textbf{Display nodes indices}, który po zaznaczeniu umożliwa wyświetlanie indeksów każdego z wierzchołków na ekranie. Ze względu na zmniejszenie czytelności wyświeltanych indeksów wierzchołków wraz ze zwiększeniem rozmiaru grafu, włączenie tej opcji jest zalecane tylko dla grafów o wymiarach mniejszych niż 30 x 30. 
+\end{itemize}
 
 \begin{figure}[H]
 \begin{center}
@@ -182,19 +197,21 @@ Pod mapą znajduje się przycisk "Modify color scale", uruchamiający okienko wy
 
 \subsection{Widok pliku}
 
-//tu nie wiem, czy jest ważne aby było 2 spacje między i t.p., więc przeczytaj i coś popraw, jak coś
-
-Program przyjmuje plik w formacie .txt.
+Program przyjmuje plik wyłącznie w formacie \texttt{.txt}.
 
 Schemat poprawnego formatu danych:
 
-Pierwszą linijkę zajmują dwie liczby: liczba wierszy i liczba kolumn, oddzielone od siebie minimum jedną spacją.
+Pierwszą linijkę zajmują dwie liczby: liczba wierszy i liczba kolumn, oddzielone od siebie minimum jedną spacją. Pomiędzy liczbami mogą się znajdować dodatkowe białe znaki (np. tabulator, spacje), ale nie może być to znak nowej linii.
 
-Zaczynając od drugiej linijki, podawane są krawędzie i ich wagi. Numer wierzchołka, od którego zaczyna się krawędź jest równy (numerowi linijki - 2), np. w 2 linijce, tuż po rozmiarach grafu, będą opisane krawędzie prowadzące do wierzchołka 0. Pierwsze dane o krawędzi muszą być podane, odstąpiwszy od początku linijki minimum jedną tabulację lub spację. Między numerem drugiego wierzchołka, złączonego krawędzią, a jej wagą musi być napisany chociażby jeden znak niepusty, np (:). Separatorem dziesiętnym wagi musi być kropka(.). Między dwoma krawędziami muszą być dwie lub więcej spacji. Tuż po ostatniej krawędzi, odnoszącej się do danego wierzchołka, przechodzimy na nową linijkę.
+Zaczynając od drugiej linijki, podawane są krawędzie i ich wagi. Numer wierzchołka, od którego zaczyna się krawędź jest równy \texttt{numerowi linijki - 2}; np. w 2 linijce, tuż po rozmiarach grafu, będą opisane krawędzie prowadzące do wierzchołka 0. Dane o krawędziach łączących wierzchołek z innymi muszą być podane w odpowiadającej mu linii. Format jest następujący:
+\begin{verbatim}
+    [indeks wierzchołka] : [waga krawędzi] ...
+\end{verbatim}
+gdzie indeks wierzchołka jest liczbą całkowitą z przedziału [0, [liczba wierszy * liczba kolumn - 1]] i oznacza wierzchołek, do którego prowadzi podana krawędź. Między indeksem wierzchołka a wagą krawędzi musi znaleźć się znak dwukropka \texttt{(:)}. Jeśli będzie to inny znak, to program wyświetli komunikat o błędnym formacie wczytywanego grafu. Waga krawędzi jest liczbą rzeczywistą; może być to liczba całkowita lub ułamek dziesiętny, z tą uwagą, że separatorem dziesiętnym musi być kropka \texttt{(.)}, a nie na przykład przecinek.
 
 Nie ma potrzeby podawać wagi dwa razy symetrycznie, np. od 0 do 1 i od 1 do 0 – program duplikuje jedną z podanych wag przy wczytaniu.
 
-Jeżeli do wierzchołka nie chcemy przypisywać żadnych krawędzi, pozostawiamy odpowiednią linijkę pustą – bez tabulacji, spacji lub innych znaków.
+Jeżeli do wierzchołka nie chcemy przypisywać żadnych krawędzi, pozostawiamy odpowiednią linijkę pustą (choć mogą znajdować się tam białe znaki, np. spacja lub tabulator, z wyłączeniem znaku nowej linii - taka zasada tyczy się do oddzielania od siebie wszystkich danych w pliku).
 
 Przykład poprawnej formy danych:
 \begin{verbatim}
@@ -376,10 +393,12 @@ Podczas pisania programu były używane testy jednostkowe.
     }
 \end{verbatim}
 
+Reszta testów odbywała się poprzez sprawdzanie działania w środowisku graficznym i weryfikowanie, czy program zwraca odpowiednie komunikaty z ostrzeżeniami i błędami oraz czy wygląd grafu jest zgodny z oczekiwanym.
+
 
 \section{Błędy i wnioski}\label{header-n233}
 
-Podczas przeprowadzania testów w czasie pisania programów zauważyłyśmy, że przedstawienie grafu w postaci macierzy sąsiedztwa nie jest optymalne: za bardzo obciąża projekt. Dlatego postanowiłyśmy zmienić postać przechowywania grafu. Graf jest przedstawiony w postaci listy z kluczami HashMap, gdzie kluczem jest numer wierzchołka, elementami - lista krawędzi, prowadzonych od niego. Krawędź jest przedstawiona klasą Edge, zawierającą numer wierzchołka końcowego i wagę. 
+Podczas przeprowadzania testów w czasie pisania programów zauważyłyśmy, że przedstawienie grafu w postaci macierzy sąsiedztwa nie jest optymalne: za bardzo obciąża projekt. Długość listy odpowiadającej macierzy rosła bardzo szybko wraz ze zwiększaniem rozmiaru grafu - lista posiadała (liczba wierszy * liczba kolumn) do potęgi drugiej elementów. Z tego wynika, że dla grafu o wymiarach 100 x 100 lista zawierała 100 milionów pozycji, a to wymagało długiego czasu na przetworzenie. Dlatego postanowiłyśmy zmienić postać przechowywania grafu. Graf jest przedstawiony w postaci listy z kluczami HashMap, gdzie kluczem jest numer wierzchołka, elementami - lista krawędzi, prowadzonych od niego. Krawędź jest przedstawiona klasą Edge, zawierającą numer wierzchołka końcowego i wagę. 
 
 
 \begin{figure}[H]
@@ -387,5 +406,7 @@ Podczas przeprowadzania testów w czasie pisania programów zauważyłyśmy, że
   \caption{Aktualny diagram klas}
   \label{fig:graf}
 \end{figure}
+
+Innym problemem było nakładanie się warstw rysunku w procesie rysowania grafu. Nie udało nam się znaleźć sposobu na utworzenie kontenerów odpowiadającym warstwom, przez co należało zwrócić uwagę, aby funkcje rysujące poszczególne części grafu były wywoływane w odpowiedniej kolejności. Ostatecznie udało się doprowadzić do tego, że rysunek wygląda prawidłowo i czytelnie nawet pomimo używania wielu opcji na jednym rysunku (tym samym nakładania kolejnych warstw), natomiast z tego powodu w kodzie występują redundantne fragmenty.
 
 \end{document}
